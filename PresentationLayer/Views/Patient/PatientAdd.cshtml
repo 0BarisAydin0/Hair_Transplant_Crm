@@ -1,0 +1,305 @@
+﻿@model DataAccessLayer.DTOs.PatientDTO
+@{
+    ViewData["Title"] = "PatientAdd";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+
+    var cinsiyet = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "Erkek", Text = "Erkek" },
+                new SelectListItem { Value = "Kadın", Text = "Kadın" }
+
+            };
+
+
+    var sigara = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "True", Text = "Kullanıyor" },
+                new SelectListItem { Value = "False", Text = "Kullanmıyor" }
+
+            };
+
+
+
+    var alkol = new List<SelectListItem>
+            {
+                 new SelectListItem { Value = "True", Text = "Kullanıyor" },
+                new SelectListItem { Value = "False", Text = "Kullanmıyor" }
+
+            };
+}
+
+
+<style>
+    .select2-selection__choice__display{
+        font-size: 13px;
+    }
+    
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+<!-- Or for RTL support -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.rtl.min.css" />
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+
+
+<div class="row">
+    <!-- FormValidation -->
+    <div class="col-12">
+        <div class="card">
+
+            <div class="card-body">
+                <form class="row g-3 fv-plugins-bootstrap5 fv-plugins-framework" role="form" asp-action="PatientAdd" method="post">
+                    <!-- Account Details -->
+                    <h3>Hasta Ekle</h3>
+                    @* <div class="text-black" asp-validation-summary="All"></div> *@
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+                        <label class="form-label" asp-for="patient.Name"></label>
+                        <input type="text" class="form-control" asp-for="patient.Name" >
+
+                    </div>
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+                        <label class="form-label" asp-for="patient.Surname"></label>
+                        <input type="text" class="form-control" asp-for="patient.Surname" required="">
+                    </div>
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+
+                        <label for="html5-date-input" class="form-label" asp-for="patient.DateOfBirth"></label>
+                        <input class="form-control" type="date" asp-for="patient.DateOfBirth" id="html5-date-input" required="">
+                    </div>
+
+
+
+                    <div class="col-md-3 fv-plugins-icon-container">
+
+                        @Html.LabelFor(x=>x.patient.Gender, "Cinsiyet")
+                        @Html.DropDownListFor(x=>x.patient.Gender, new SelectList(cinsiyet, "Value", "Text"), "Seçiniz", new { @class = "form-control" } )
+                    </div>
+
+
+
+                    <div class="col-md-3 fv-plugins-icon-container">
+                        <label class="form-label" asp-for="patient.PhoneNumber"></label>
+                        <input type="text" id="html5-tel-input" class="form-control" asp-for="patient.PhoneNumber" required="">
+                    </div>
+
+
+                    <div class="col-md-3 fv-plugins-icon-container">
+                        <label class="form-label" asp-for="patient.Mail"></label>
+                        <input type="email" class="form-control" asp-for="patient.Mail" required="">
+                    </div>
+
+
+                    <div class="col-md-3 fv-plugins-icon-container">
+                        @Html.LabelFor(x=>x.patient.Country, "Ülkesi")
+                        @Html.DropDownListFor(x => x.patient.Country, new SelectList(Model.countries,  "CountryName", "CountryName"), "Seçiniz", new { @class = "form-control" })
+
+                    </div>
+
+                    
+                   @*  <div class="col-md-3 fv-plugins-icon-container">
+
+                        <label class="form-label" for="basic-default-country"> Ülkesi</label>
+                        <div class="mb-3">
+                            <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
+
+                                @foreach (var item in Model.countries)
+                                {
+
+
+
+                                    <option value="@item.CountryName">@item.CountryName</option>
+
+
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+ *@
+
+                    <div class="col-md-3 fv-plugins-icon-container">
+                        <label class="form-label" asp-for="patient.Height"></label>
+                        <input type="text" class="form-control" asp-for="patient.Height" required="">
+                    </div>
+
+                    <div class="col-md-3 fv-plugins-icon-container">
+                        <label class="form-label" asp-for="patient.Kilo"></label>
+                        <input type="text" class="form-control" asp-for="patient.Kilo" required="">
+                    </div>
+
+
+                    <div class="col-md-3 fv-plugins-icon-container">
+
+                        @Html.LabelFor(x=>x.patient.IsSmoke, "Sigara Kullanımı")
+                        @Html.DropDownListFor(x=>x.patient.IsSmoke, new SelectList(sigara, "Value", "Text"), "Seçiniz", new { @class = "form-control" } )
+                    </div>
+
+
+                    <div class="col-md-3 fv-plugins-icon-container">
+
+                        @Html.LabelFor(x=>x.patient.IsAlcohol, "Alkol Kullanımı")
+                        @Html.DropDownListFor(x=>x.patient.IsAlcohol, new SelectList(alkol, "Value", "Text"), "Seçiniz", new { @class = "form-control" } )
+                    </div>
+
+
+                    <div class="col-md-3 fv-plugins-icon-container">
+                        <label class="form-label"> Tansiyon</label>
+                        <input type="text" class="form-control" asp-for="patient.BloodPressure">
+                    </div>
+
+                    <div class="col-md-3 fv-plugins-icon-container">
+                        <label class="form-label"> Nabız</label>
+                        <input type="text" class="form-control" asp-for="patient.Pulse">
+                    </div>
+
+
+                    <div class="col-md-3 fv-plugins-icon-container">
+                      
+                    
+                        <label class="form-label" for="basic-default-country"> Kronik Hastalıkları</label>
+                        <div class="mb-3">
+                            <select class="form-select" id="multiple-select-field" data-placeholder="Seçiniz" multiple>
+                              
+                                @foreach (var item in Model.chronicProblemslist)
+                                {
+
+
+
+                                    <option value="@item.Title">@item.Title</option>
+
+
+                                }
+                            </select>
+                        </div>
+
+                        <input type="text" id="selectedValuesInputchronicproblem" asp-for="patient.ChronicProblem" style="display:none;">
+                        
+
+                    </div>
+
+                    @* <div class="mb-3">
+                        <label for="exampleFormControlSelect2" class="form-label">Bulaşıcı Hastlıklar</label>
+                        <select multiple="" class="form-select" id="exampleFormControlSelect2" aria-label="Multiple select example">
+                            @foreach (var item in Model.ınfectiousDiseases)
+                            {
+
+
+
+                                <option value="@item.Title">@item.Title</option>
+
+
+                            }
+                        </select>
+                    </div>
+ *@
+                  
+
+                    <div class="col-md-3 fv-plugins-icon-container">
+
+                        <label class="form-label" for="basic-default-country"> Bulaşıcı Hastalıkları</label>
+                        <div class="mb-3">
+                            <select class="form-select" id="multiple-select-field2" data-placeholder="Seçiniz" multiple>
+                                
+                                @foreach (var item in Model.ınfectiousDiseases)
+                                {
+
+
+
+                                    <option value="@item.Title">@item.Title</option>
+
+
+                                }
+                            </select>
+                        </div>
+                        <input type="text" id="selectedValuesInputinfective" asp-for="patient.InfectiousDisease" style="display:none;">
+                    </div>
+
+
+                    <div class="col-md-6 fv-plugins-icon-container">
+                        <label class="form-label" for="formValidationBio" asp-for="patient.Medications"></label>
+                        <textarea class="form-control" id="formValidationBio" asp-for="patient.Medications" rows="3"></textarea>
+                    </div>
+
+
+                   <div class="col-md-6 fv-plugins-icon-container">
+                        <label class="form-label" for="formValidationBio" asp-for="patient.Note"></label>
+                        <textarea class="form-control" id="formValidationBio" asp-for="patient.Note" rows="3"></textarea>
+                    </div>
+
+ 
+
+                    <div class="col-12">
+                        <button type="submit" onclick="getPostData()" class="btn btn-primary waves-effect waves-light">Kaydet</button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+<script>
+    function getPostData() {
+        // Seçili option elemanlarını al
+        var selectedOptions = document.querySelectorAll('#multiple-select-field option:checked');
+        var selectedOptions2 = document.querySelectorAll('#multiple-select-field2 option:checked');
+
+        // Seçili option değerlerini bir dizeye dönüştür
+        var selectedValues = Array.from(selectedOptions).map(option => option.value);
+        var selectedValues2 = Array.from(selectedOptions2).map(option => option.value);
+
+        // Diziyi virgülle ayrılmış bir stringe dönüştür
+        var selectedString = selectedValues.join(',');
+        var selectedString2 = selectedValues2.join(',');
+
+
+        document.getElementById('selectedValuesInputchronicproblem').value = selectedString;
+        document.getElementById('selectedValuesInputinfective').value = selectedString2;
+
+       
+    }
+</script>
+
+
+
+<script>
+    $('#multiple-select-field').select2({
+        theme: "bootstrap-5",
+        width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+        placeholder: $(this).data('placeholder'),
+        closeOnSelect: false,
+    });
+
+
+    $('#multiple-select-field2').select2({
+        theme: "bootstrap-5",
+        width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+        placeholder: $(this).data('placeholder'),
+        closeOnSelect: false,
+    });
+
+
+    
+</script>

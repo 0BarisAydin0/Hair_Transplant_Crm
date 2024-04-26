@@ -1,0 +1,108 @@
+﻿@model OperationDTO
+@{
+    ViewData["Title"] = "OperationAdd";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+
+    string Name = Model.Patient.Name;
+    string Surname = Model.Patient.Surname;
+    string FullName = $"{Name} {Surname}";
+
+}
+
+<link href="~/css/semantic.css" rel="stylesheet" />
+
+<div class="row">
+    <!-- FormValidation -->
+    <div class="col-12">
+        <div class="card">
+
+            <div class="card-body">
+                <form class="row g-3 fv-plugins-bootstrap5 fv-plugins-framework" asp-action="OperationAdd" asp-controller="Operation" method="post">
+                    <!-- Account Details -->
+                    <h5>@FullName.ToUpper()</h5>
+                    <input type="hidden" class="form-control" asp-for="Operation.PatientID" value="@Model.Patient.PatientID">
+
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+                        <label class="form-label" asp-for="Operation.Technique "></label>
+
+                        @Html.DropDownListFor(x=>x.Operation.Technique, new SelectList(Model.Techniques,  "Title", "Title"), "Seçiniz", new { @class = "form-control" })
+                    </div>
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+                        <label class="form-label" asp-for="Operation.GreftCount "></label>
+                        <input type="text" class="form-control" asp-for="Operation.GreftCount" required="" autofocus>
+
+                    </div>
+
+
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+                        <label class="form-label" asp-for="Operation.Currency "></label>
+                        @Html.DropDownListFor(x=>x.Operation.Currency, new SelectList(Model.currencies,  "CurrencyCode", "Title"), "Seçiniz", new { @class = "form-control" })
+
+                    </div>
+
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+                        <label class="form-label" asp-for="Operation.Price "></label>
+                        <input type="number" class="form-control" asp-for="Operation.Price" required="" autofocus>
+
+                    </div>
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+
+                        <label for="html5-date-input" class="form-label" asp-for="Operation.OperationDate"></label>
+                        <input class="form-control" type="date" asp-for="Operation.OperationDate" id="html5-date-input" required="">
+                    </div>
+
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+
+                        <label for="html5-date-input" class="form-label"> İlgili Personel</label>
+                        <br />
+                        <select class="ui search dropdown" id="myDropdown" asp-for="Operation.PersonalID">
+                            <option value="">Seçiniz</option>
+                            @foreach (var item in Model.Personals)
+                            {
+                                 <option value="@item.PersonalID">@item.Name @item.Surname</option>
+                            }
+                           
+                     
+                        </select>
+
+
+
+                    </div>
+
+
+
+                    <div class="col-md-12 fv-plugins-icon-container">
+                        <label class="form-label" for="formValidationBio" asp-for="Operation.Note"></label>
+                        <textarea class="form-control" id="formValidationBio" asp-for="Operation.Note" rows="3"></textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary waves-effect waves-light">Kaydet</button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@* <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script> *@
+<script src="~/js/semantic.js"></script>
+<script>
+    $('#myDropdown').dropdown();
+</script>

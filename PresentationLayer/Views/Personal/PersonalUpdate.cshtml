@@ -1,0 +1,113 @@
+﻿@model Personal
+
+@{
+    ViewData["Title"] = "PersonalUpdate";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var cinsiyet = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "Erkek", Text = "Erkek" },
+                new SelectListItem { Value = "Kadın", Text = "Kadın" }
+
+            };
+
+    string GenderValue = Model.Gender.ToString();
+}
+
+
+
+    
+    <div class="row">
+        <!-- FormValidation -->
+        <div class="col-12">
+            <div class="card">
+
+                <div class="card-body">
+                    <form class="row g-3 fv-plugins-bootstrap5 fv-plugins-framework" role="form" asp-action="Update" method="post">
+                        <!-- Account Details -->
+                        <h3>Personel Ekle</h3>
+                        @* <div class="text-black" asp-validation-summary="All"></div> *@
+
+                    <input type="hidden"  asp-for="PersonalID" >
+                        
+                        <div class="col-md-6 fv-plugins-icon-container">
+                            <label class="form-label" asp-for="Name"></label>
+                            <input type="text" class="form-control" asp-for="Name" required="">
+
+                        </div>
+
+                        <div class="col-md-6 fv-plugins-icon-container">
+                            <label class="form-label" asp-for="Surname"></label>
+                            <input type="text" class="form-control" asp-for="Surname" required="">
+                        </div>
+
+                        <div class="col-md-6 fv-plugins-icon-container">
+                            <label class="form-label" asp-for="Mail"></label>
+                            <input type="email" class="form-control" asp-for="Mail" required="">
+                        </div>
+
+                        <div class="col-md-6 fv-plugins-icon-container">
+                            <label class="form-label" asp-for="PhoneNumber"></label>
+                            <input type="text" class="form-control" asp-for="PhoneNumber" required="">
+                        </div>
+                        <div class="col-md-3 fv-plugins-icon-container">
+
+
+
+
+
+                            @* @Html.Label("Kadın") @Html.RadioButtonFor(model => model.Gender, "Kadın",new{@class="form-check-label"})
+                            @Html.Label("Erkek") @Html.RadioButtonFor(model => model.Gender, "Erkek",new{@class="form-check-label"}) *@
+
+
+                            @*
+                            @Html.RadioButtonFor(model => model.Gender, "E") @Html.Label("Erkek:")
+                            @Html.RadioButtonFor(model => model.Gender, "K") @Html.Label("Kadın:") *@
+
+                       
+                            @Html.LabelFor(model => model.Gender, "Cinsiyet")
+                            @Html.DropDownListFor(model => model.Gender, new SelectList(cinsiyet, "Value", "Text"), GenderValue, new { @class = "form-control" } )
+
+
+                        </div>
+
+                        <div class="col-md-3 fv-plugins-icon-container">
+
+                            <label for="html5-date-input" class="form-label" asp-for="DateOfBirth"></label>
+                            <input class="form-control" type="date" asp-for="DateOfBirth" id="html5-date-input" required="">
+                        </div>
+
+
+
+
+                        <div class="col-md-3 fv-plugins-icon-container">
+
+                            <label class="form-label" for="basic-default-country"> Alanı</label>
+                            @Html.DropDownListFor(x=>x.Scope,(IEnumerable<SelectListItem>)ViewData["scopelist"], "Seçiniz", new {@class="form-control"})
+
+                        </div>
+
+
+
+
+                        <div class="col-md-3 fv-plugins-icon-container">
+                            <label class="form-label" for="formValidationBio" asp-for="Address"></label>
+                            <textarea class="form-control" id="formValidationBio" asp-for="Address" rows="3"></textarea>
+                        </div>
+
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Kaydet</button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+

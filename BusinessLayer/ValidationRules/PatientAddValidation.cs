@@ -1,0 +1,25 @@
+﻿using EntityLayer;
+using FluentValidation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessLayer.ValidationRules
+{
+    public class PatientAddValidation : AbstractValidator<Patient>
+    {
+        public PatientAddValidation()
+        {
+            RuleFor(x => x.Name).NotEmpty().WithMessage("Lütfen Adınızı Yazın");
+            //RuleFor(x => x.Surname).NotEmpty().WithMessage("Lütfen Soyadınızı Yazın");
+            //RuleFor(x => x.Gender).NotEmpty().WithMessage("Cinsiyet Alanını Boş Bırakmayınız");
+        }
+    }
+
+
+
+
+    
+}

@@ -1,0 +1,28 @@
+﻿@model Tuple<OperationDetailsViewModel,PatientOperationImg>
+
+
+@{
+    Layout = null;
+
+    var model1 = Model.Item1;
+    var model2 = Model.Item2;
+
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Default</title>
+</head>
+<body>
+</body>
+</html>
+
+<div class="col-md-3 fv-plugins-icon-container">
+    @Html.LabelFor(x=>x.Item1.ReminderDateName, "Periyot Zamanı")
+    @Html.DropDownListFor(x => x.Item2.ReminderDateID, new SelectList(Model.Item1.reminderDatelist, "ReminderDateID", "RemindDayCountName"), "Seçiniz", new { @class = "form-control" })
+
+</div>

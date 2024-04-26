@@ -1,0 +1,83 @@
+﻿@model OfferDTO
+@{
+    ViewData["Title"] = "AddOffer";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    
+
+    string Name = Model.Patient.Name;
+    string Surname = Model.Patient.Surname;
+    string FullName = $"{Name} {Surname}";
+
+}
+
+
+<div class="row">
+    <!-- FormValidation -->
+    <div class="col-12">
+        <div class="card">
+
+            <div class="card-body">
+                <form class="row g-3 fv-plugins-bootstrap5 fv-plugins-framework" asp-action="AddOffer" asp-controller="Offer" method="post">
+                    <!-- Account Details -->
+                    <h5>@FullName.ToUpper()</h5>
+                    <input type="hidden" class="form-control" asp-for="Offer.PatientID" value="@Model.Patient.PatientID">
+
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+                        <label class="form-label" asp-for="Offer.Technique "></label>
+               
+                        @Html.DropDownListFor(x=>x.Offer.Technique, new SelectList(Model.Techniques,  "Title", "Title"), "Seçiniz", new { @class = "form-control" })
+                    </div>
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+                        <label class="form-label" asp-for="Offer.GreftCount "></label>
+                        <input type="text" class="form-control" asp-for="Offer.GreftCount" required="" autofocus>
+
+                    </div>
+
+
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+                        <label class="form-label" asp-for="Offer.Currency "></label>
+                        @Html.DropDownListFor(x=>x.Offer.Currency, new SelectList(Model.currencies,  "CurrencyCode", "Title"), "Seçiniz", new { @class = "form-control" })
+
+                    </div>
+
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+                        <label class="form-label" asp-for="Offer.Price "></label>
+                        <input type="number" class="form-control" asp-for="Offer.Price" required="" autofocus>
+
+                    </div>
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+
+                        <label for="html5-date-input" class="form-label" asp-for="Offer.OfferStartDate"></label>
+                        <input class="form-control" type="date" asp-for="Offer.OfferStartDate" id="html5-date-input" required="">
+                    </div>
+
+                    <div class="col-md-4 fv-plugins-icon-container">
+
+                        <label for="html5-date-input" class="form-label" asp-for="Offer.OfferEndDate"></label>
+                        <input class="form-control" type="date" asp-for="Offer.OfferEndDate" id="html5-date-input" required="">
+                    </div>
+
+
+                    <div class="col-md-12 fv-plugins-icon-container">
+                        <label class="form-label" for="formValidationBio" asp-for="Offer.Note"></label>
+                        <textarea class="form-control" id="formValidationBio" asp-for="Offer.Note" rows="3"></textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary waves-effect waves-light">Kaydet</button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>

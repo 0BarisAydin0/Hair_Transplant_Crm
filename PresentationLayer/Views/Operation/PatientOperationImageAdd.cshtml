@@ -1,0 +1,44 @@
+﻿@model OperationDetailsViewModel
+@{
+    ViewData["Title"] = "PatientOperationImageAdd";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@if (Model.Operation != null )
+{
+
+    <div class="card-body">
+        <form class="row g-3 fv-plugins-bootstrap5 fv-plugins-framework" role="form" asp-action="PatientOperationImageAdd" method="post" enctype="multipart/form-data">
+            <!-- Account Details -->
+            <h3>@Model.Operation.Patient.Name @Model.Operation.Patient.Surname</h3>
+            <p>*Hastaya aynı periyot için en fazla 5 görsel yükleyebilirsiniz</p>
+
+            <input type="hidden" class="form-control" asp-for="@Model.PatientOperationImg.OperationID" value="@Model.Operation.OperationID">
+
+            <div class="col-md-3 fv-plugins-icon-container">
+                <label for="formFileMultiple" class="form-label" asp-for="@Model.PatientOperationImg.POImg"> Görsel Ekle</label>
+                <input class="form-control" name="formFiles" type="file" id="formFileMultiple" multiple asp-for="@Model.PatientOperationImg.POImg">
+            </div>
+
+
+
+            <div class="col-md-3 fv-plugins-icon-container">
+                @Html.LabelFor(Model=>Model.reminderDatelist, "Görsel Periyodu")
+                @Html.DropDownListFor(Model=>Model.PatientOperationImg.ReminderDateID, new SelectList(Model.reminderDatelist,  "ReminderDateID", "RemindDayCountName"), "Seçiniz", new { @class = "form-control" })
+
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary waves-effect waves-light">Kaydet</button>
+
+            </div>
+
+        </form>
+
+    </div>
+}
+else if (Model.Operation==null)
+{
+    <h1>Operasyona ait hasta bulunamadı</h1>
+}
+

@@ -1,0 +1,366 @@
+﻿@model PatientDTO
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    string IsAlcohol = "";
+    string IsSmoke = "";
+    
+}
+
+
+<style>
+    textarea#formValidationBio {
+        padding-bottom: 15px;
+    }
+</style>
+
+
+<div>
+    <div class="content-wrapper">
+        <!-- Content -->
+
+        <div class="container-xxl flex-grow-1 container-p-y">
+
+            <!-- Header -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+
+                        <div class="user-profile-header d-flex flex-column flex-sm-row text-sm-start text-center mb-4">
+                            <div class="flex-shrink-0 mt-n2 mx-sm-0 mx-auto">
+                                <img src="/theme/assets/img/avatars/blank-profile-picture.png" alt="user image" class="d-block h-auto ms-0 ms-sm-4 rounded user-profile-img" style="max-height: 150px; border-radius: 10px; margin-top: 30px;">
+                            </div>
+                            <div class="flex-grow-1 mt-3 mt-sm-5">
+                                <div class="d-flex align-items-md-end align-items-sm-start align-items-center justify-content-md-between justify-content-start mx-4 flex-md-row flex-column gap-4">
+                                    <div class="user-profile-info">
+                                        <h4>@Model.patient.Name @Model.patient.Surname</h4>
+                                        <ul class="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-2">
+
+
+                                            @if (Model != null)
+                                            {
+                                                if (Model.operation == null)
+                                                {
+                                                    <li class="list-inline-item d-flex gap-1">
+                                                        <i class="ti ti-color-swatch"></i>
+                                                        Ekim Yapılmadı
+                                                    </li>
+                                                }
+                                                else if (Model.operation.Patient != null)
+                                                {
+                                                    <li class="list-inline-item d-flex gap-1">
+                                                        <i class="ti ti-color-swatch"></i>
+                                                        Ekimi Yapan : @Model.operation.Personal.Name @Model.operation.Personal.Surname
+                                                    </li>
+                                                }
+                                            }
+
+
+                                            @if (Model != null)
+                                            {
+                                                if (Model.operation == null)
+                                                {
+
+                                                }
+                                                else if (Model.operation.Patient != null)
+                                                {
+                                                    DateTime operationDate = @Model.operation.OperationDate;
+
+                                                    // Şu anki tarih ve saat bilgisini alın
+                                                    DateTime currentDate = DateTime.Now;
+
+                                                    // Farkı hesapla
+                                                    TimeSpan difference = currentDate - operationDate;
+
+                                                    // Toplam gün sayısını al
+                                                    int totalDays = (int)difference.TotalDays;
+
+                                                    // Kaç ay ve gün olduğunu hesapla
+                                                    int totalMonths = totalDays / 30; // Ortalama bir ay 30 gün kabul edilerek
+                                                    int remainingDays = totalDays % 30;
+
+                                                    // 1 yıl geçmişse
+                                                    if (totalDays >= 365)
+                                                    {
+                                                        int years = totalDays / 365;
+                                                        int remainingDaysAfterYears = totalDays % 365;
+                                                        int monthsAfterYears = remainingDaysAfterYears / 30;
+                                                        int remainingDaysAfterMonths = remainingDaysAfterYears % 30;
+
+                                                        <li class="list-inline-item d-flex gap-1">
+                                                            <i class="ti ti-color-swatch"></i>
+                                                            İlk Operasyon Tarihi @Model.operation.OperationDate.ToShortDateString() ( @years yıl @monthsAfterYears ay @remainingDaysAfterMonths gün )
+                                                        </li>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <li class="list-inline-item d-flex gap-1">
+                                                            <i class="ti ti-color-swatch"></i>
+                                                            İlk Operasyon Tarihi @Model.operation.OperationDate.ToShortDateString() ( @totalMonths ay @remainingDays gün )
+                                                        </li>
+                                                    }
+
+                                                }
+                                            }
+
+
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <a href="/Offer/AddOffer/@Model.patient.PatientID" class="btn btn-primary waves-effect waves-light">
+                                            <i class="ti ti-check me-1"></i>Teklif Ekle
+                                        </a>
+                                        <a href="/Operation/OperationAdd/@Model.patient.PatientID" class="btn btn-primary waves-effect waves-light">
+                                            <i class="ti ti-check me-1"></i>İşlem Ekle
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-3">
+                    <!-- About User -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-4 mt-3">
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-person"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.patient.Name) @Html.DisplayNameFor(model => model.patient.Surname):</span> <span>@Html.DisplayFor(model => model.patient.Name) @Html.DisplayFor(model => model.patient.Surname)</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-envelope"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.patient.Mail):</span> <span>@Html.DisplayFor(model => model.patient.Mail)</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-telephone"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.patient.PhoneNumber):</span> <span><a href="tel:@Html.DisplayFor(model => model.patient.PhoneNumber)">@Html.DisplayFor(model => model.patient.PhoneNumber)</a></span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-gender-ambiguous"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.patient.Gender):</span> <span>@Html.DisplayFor(model => model.patient.Gender)</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-calendar-check"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.patient.DateOfBirth):</span> <span>@Html.DisplayFor(model => model.patient.DateOfBirth)</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-crosshair"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.patient.Height):</span> <span>@Html.DisplayFor(model => model.patient.Height)</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-crosshair"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.patient.Kilo):</span> <span>@Html.DisplayFor(model => model.patient.Kilo)</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-geo-alt-fill"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.patient.Country):</span> <span>@Html.DisplayFor(model => model.patient.Country)</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    
+                                    <i class="fab fa-whatsapp"></i><span class="fw-medium mx-2 text-heading">Whatsapp:</span> <a href="https://wa.me/@Model.patient.PhoneNumber">İletişime Geç</a>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-xl-9">
+                    <div class="card">
+
+                        <div class="card-body">
+                            <div class="row g-3 fv-plugins-bootstrap5 fv-plugins-framework" role="form" method="post" action="/Personal/PersonalAdd">
+                                <!-- Account Details -->
+
+
+                                <div class="col-md-2 fv-plugins-icon-container">
+                                    <label class="form-label" for="Name" asp-for="patient.Height"></label>
+                                    <input readonly type="text" class="form-control" data-val="true" value="@Model.patient.Height">
+
+                                </div>
+
+                                <div class="col-md-2 fv-plugins-icon-container">
+                                    <label class="form-label" for="Name" asp-for="patient.Kilo"></label>
+                                    <input readonly type="text" class="form-control" data-val="true" value="@Model.patient.Kilo">
+
+                                </div>
+
+                                <div class="col-md-2 fv-plugins-icon-container">
+                                    <label class="form-label" for="Name" asp-for="patient.BloodPressure"></label>
+                                    <input readonly type="text" class="form-control" data-val="true" value="@Model.patient.BloodPressure">
+
+                                </div>
+
+                                <div class="col-md-2 fv-plugins-icon-container">
+                                    <label class="form-label" for="Name" asp-for="patient.Pulse"></label>
+                                    <input readonly type="text" class="form-control" data-val="true" value="@Model.patient.Pulse">
+
+                                </div>
+
+                                @if (Model.patient.IsAlcohol != null)
+                                {
+                                    if (Model.patient.IsAlcohol == true)
+                                    {
+                                        IsAlcohol = "Kullanıyor";
+                                    }
+                                    else
+                                    {
+                                        IsAlcohol = "Kullanmıyor";
+                                    }
+                                }
+
+
+                                <div class="col-md-2 fv-plugins-icon-container">
+                                    <label class="form-label" for="Name" asp-for="patient.IsAlcohol"></label>
+                                    <input readonly type="text" class="form-control" data-val="true" value="@IsAlcohol">
+
+
+                                </div>
+
+                                @if (Model.patient.IsSmoke != null)
+                                {
+                                    if (Model.patient.IsSmoke == true)
+                                    {
+                                        IsSmoke = "Kullanıyor";
+                                    }
+                                    else
+                                    {
+                                        IsSmoke = "Kullanmıyor";
+                                    }
+                                }
+
+
+
+                                <div class="col-md-2 fv-plugins-icon-container">
+                                    <label class="form-label" for="Name" asp-for="patient.IsSmoke"></label>
+                                    <input readonly type="text" class="form-control" data-val="true" value="@IsSmoke">
+
+                                </div>
+
+
+
+
+
+                                @{
+                                    // Virgülle ayrılmış kronik problem stringini parçalayın
+                                    var chronicProblems = Model.patient.ChronicProblem.Split(',');
+
+                                    // Boş olmayan ve boşlukları temizlenmiş her bir parçayı içeren bir liste oluşturun
+                                    var problemList = chronicProblems
+                                    .Where(part => !string.IsNullOrWhiteSpace(part))
+                                    .Select(part => part.Trim())
+                                    .ToList();
+                                }
+
+
+
+                                <div class="col-md-4 fv-plugins-icon-container">
+                                    <label for="exampleFormControlSelect2" class="form-label" asp-for="patient.ChronicProblem"></label>
+                                    <select multiple="" class="form-select" id="exampleFormControlSelect2" aria-label="Multiple select example">
+                                        @foreach (var item in problemList)
+                                        {
+
+                                            <option disabled>@item</option>
+
+                                        }
+
+
+                                    </select>
+                                </div>
+
+
+
+
+
+                                @{
+                                    // Virgülle ayrılmış kronik problem stringini parçalayın
+                                    var InfectiousDisease = Model.patient.InfectiousDisease.Split(',');
+
+                                    // Boş olmayan ve boşlukları temizlenmiş her bir parçayı içeren bir liste oluşturun
+                                    var InfectiousDiseaseproblemList = InfectiousDisease
+                                    .Where(part => !string.IsNullOrWhiteSpace(part))
+                                    .Select(part => part.Trim())
+                                    .ToList();
+                                }
+
+
+
+                                <div class="col-md-4 fv-plugins-icon-container">
+                                    <label for="exampleFormControlSelect2" class="form-label" asp-for="patient.InfectiousDisease"></label>
+                                    <select multiple="" class="form-select" id="exampleFormControlSelect2" aria-label="Multiple select example">
+                                        @foreach (var item in InfectiousDiseaseproblemList)
+                                        {
+
+                                            <option disabled>@item</option>
+
+                                        }
+
+
+                                    </select>
+                                </div>
+
+
+
+                                <div class="col-md-4 fv-plugins-icon-container">
+                                    <label class="form-label" for="formValidationBio" asp-for="patient.Medications"></label>
+                                    <textarea class="form-control" id="formValidationBio" asp-for="patient.Medications" rows="3" readonly></textarea>
+                                </div>
+
+                                <div class="col-md-12 fv-plugins-icon-container">
+                                    <label class="form-label" for="formValidationBio" asp-for="patient.Note"></label>
+                                    <textarea class="form-control" id="formValidationBio" asp-for="patient.Note" rows="3" readonly></textarea>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="nav-align-top mb-4">
+            <ul class="nav nav-pills mb-3 nav-fill" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-justified-home" aria-controls="navs-pills-justified-home" aria-selected="true">
+                        Hastaya Ait İşlemler
+                        <span class="badge rounded-pill badge-center h-px-20 w-px-20 bg-danger ms-1">@ViewBag.OperationCount</span>
+                       
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-justified-profile" aria-controls="navs-pills-justified-profile" aria-selected="false" tabindex="-1">
+                        Hastaya Ait Teklifler
+                        <span class="badge rounded-pill badge-center h-px-20 w-px-20 bg-danger ms-1">@ViewBag.OfferCount</span>
+                    </button>
+                </li>
+
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="navs-pills-justified-home" role="tabpanel">
+
+
+                    @await Component.InvokeAsync("PatientOperations", new { id = Model.patient.PatientID})
+
+                </div>
+                <div class="tab-pane fade" id="navs-pills-justified-profile" role="tabpanel">
+                    @await Component.InvokeAsync("PatientOffers", new { id = Model.patient.PatientID})
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

@@ -1,0 +1,56 @@
+﻿@model PatientDTO
+
+<div class="card">
+
+    <div class="table-responsive text-nowrap">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Teknik</th>
+                    <th>Greft Sayısı</th>
+                    <th>Ekim Tarihi</th>
+                    <th>Fiyat</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                @foreach (var item in Model.patientoperationlist)
+                    { <tr>
+                   
+                        <td>
+
+                            <span class="fw-medium">@item.Technique</span>
+                        </td>
+                        <td>@item.GreftCount</td>
+                        <td>@item.OperationDate.ToShortDateString()</td>
+                        <td><span class="badge bg-label-primary me-1">@item.Price @item.Currency</span></td>
+                        <td><textarea rows="2" class="badge bg-label-primary me-1" readonly>@item.Note</textarea></td>
+                       @* <td>
+                            <button type="button" class="btn btn-info"
+                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                    data-bs-custom-class="custom-tooltip"
+                                    data-bs-title="@item.Note">
+                                Not 2
+                            </button>
+                           
+                        </td>*@
+                        <td>
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                    <i class="ti ti-dots-vertical"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="/Operation/PatientOperationImageAdd/@item.OperationID"><i class="ti ti-pencil me-1"></i> Görsel Ekle </a>
+                                    <a class="dropdown-item" href="/Operation/OperationDetails/@item.OperationID"><i class="ti ti-eye me-1"></i> Görseller </a>
+                                </div>
+                            </div>
+                        </td>
+                   
+
+                </tr>
+ }
+            </tbody>
+        </table>
+    </div>
+</div>
+

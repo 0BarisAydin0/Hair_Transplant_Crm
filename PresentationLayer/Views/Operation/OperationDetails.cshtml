@@ -1,0 +1,213 @@
+﻿@model Tuple<List<OperationDetailsViewModel>,OperationDetailsViewModel>
+
+
+@{
+    ViewData["Title"] = "OperationDetails";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+
+    var model1 = Model.Item1;
+    var model2 = Model.Item2;
+
+   
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div style="text-align:center" class="col-12">
+                <h1 class="page-title" style="text-align:center">@model2.Patient.Name @model2.Patient.Surname</h1>
+                <a class="btn btn-primary waves-effect waves-light" href="/Operation/PatientOperationImageAdd/@ViewBag.operationid">Yeni Görsel Yükle</a>
+
+                <h1 class="page-title"> </h1>
+
+                @if (model1.FirstOrDefault(x => x.ReminderDateID == x.ReminderDateID) == null)
+                {
+                    <div class="container" style="text-align:center">
+                        <h3 style="text-align:center;padding-top:20px">Hastaya ait işlem fotografı bulunmuyor</h3>
+                    </div>
+                }
+
+                <div class="row">
+                    @foreach (var grup in model1)
+                    {
+                        <h3 class="gallery-title">@grup.ReminderDateName</h3>
+
+                        @foreach (var item in grup.PatientOperationImgs)
+                        {
+
+                            <a href="@item.POImg" data-lightbox="example-gallery" class="col-lg-2 col-md-4 col-6 my-3">
+                                <img src="@item.POImg" class="img-fluid card">
+                            </a>
+                        }
+                    }
+                </div>
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Lightbox CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+    <!-- Bootstrap JS CDN (yalnızca resimlerin grid düzeni için kullanılır, gerektiğinde çıkarılabilir) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+
+@* 
+<div class="card-body">
+    <form class="row g-3 fv-plugins-bootstrap5 fv-plugins-framework" role="form" asp-action="OperationDetails" asp-controller="Operation" method="post">
+        <!-- Account Details -->
+        <h3>Hasta Ekle</h3>
+
+
+        <div class="col-md-3 fv-plugins-icon-container">
+            <label class="form-label" asp-for="Item2.PatientOperationImgEntitys.PatientImgID"></label>
+            <input type="text" class="form-control" asp-for="Item2.PatientOperationImgEntitys.PatientImgID" name="@model2.PatientOperationImgEntitys.PatientImgID" required="">
+        </div>
+
+
+        <div class="col-md-3 fv-plugins-icon-container">
+            @Html.LabelFor(x=>x.Item2.reminderDatelist, "Periyodu")
+            @Html.DropDownListFor(model2=>model2.Item2.PatientOperationImgEntitys, new SelectList(model2.reminderDatelist,  "ReminderDateID", "RemindDayCountName"), "Seçiniz", new { @class = "form-control" })
+
+        </div>
+
+
+
+
+
+
+
+        <div class="col-12">
+            <button type="submit" onclick="getPostData()" class="btn btn-primary waves-effect waves-light">Kaydet</button>
+
+        </div>
+
+    </form>
+
+</div>
+ *@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*
+<h1>aaaaaaaaaaaaaaaa</h1>
+
+
+<!-- operationDTO içindeki verilere erişme -->
+<h2>Operation Information</h2>
+<p>Operation ID: @Model.Operation.OperationID</p>
+<!-- Diğer operationDTO özelliklerini burada görüntüleyin -->
+<!-- gruplar içindeki verilere erişme -->
+@if (Model.patientOperationImgs.ToList() == null)
+{
+
+    <h1>gösterilecek birşey yok</h1>
+
+}
+else
+{
+
+    @foreach (var grup in Model.patientOperationImgsGruplar.ToList())
+    {
+        <h3>ReminderDateID: @grup.FirstOrDefault()?.ReminderDateID</h3>
+        <ul>
+            @foreach (var item in grup)
+            {
+                <li>@item.ReminderDateID - @item.POImg</li>
+            }
+        </ul>
+    }
+
+
+} *@
+
+
+
+
+
+@*
+Burada işlem ViewData üzerinden gerçekleitirildi
+
+@foreach (var grup in ViewData["Gruplar"] as List<List<PatientOperationImg>>)
+{
+    <h3>ReminderDateID: @grup.FirstOrDefault()?.ReminderDateID</h3>
+    <ul>
+        @foreach (var item in grup)
+        {
+            <li>@item.ReminderDateID - <img src=" @item.POImg" alt="Örnek Resim" /></li>
+        }
+    </ul>
+} *@
+
+
+
+
+@*
+
+<!-- operationDTO içindeki verilere erişme -->
+<h2>Operation Information</h2>
+<p>Operation ID: @operationDTO.Operation.OperationID</p>
+<!-- Diğer operationDTO özelliklerini burada görüntüleyin -->
+<!-- gruplar içindeki verilere erişme -->
+@foreach (var grup in gruplar)
+{
+    <h3>ReminderDateID: @grup.FirstOrDefault()?.ReminderDateID</h3>
+    <ul>
+        @foreach (var item in grup)
+        {
+            <li>@item.ReminderDateID - @item.POImg</li>
+        }
+    </ul>
+}
+
+ *@
+
+
+@*
+
+--->ham örnek
+
+
+@foreach (var grup in Model)
+{
+    <h2>Reminder Date ID: @grup.ReminderDateID</h2>
+    <h3>Reminder Date Name: @grup.ReminderDateName</h3>
+
+    <ul>
+        @foreach (var img in grup.PatientOperationImgs)
+        {
+            <li>Image URL: @img.POImg</li>
+            <!-- Diğer resim özelliklerini burada gösterin -->
+        }
+    </ul>
+}
+
+
+ *@
+

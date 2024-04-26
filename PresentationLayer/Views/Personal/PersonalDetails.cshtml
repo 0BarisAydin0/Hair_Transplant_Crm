@@ -1,0 +1,207 @@
+﻿@model PersonalDTO
+
+@{
+    ViewData["Title"] = "PersonalDetails";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+}
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd" crossorigin="anonymous">
+
+
+<div>
+    <div class="content-wrapper">
+        <!-- Content -->
+
+        <div class="container-xxl flex-grow-1 container-p-y">
+
+            <!-- Header -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+
+                        <div class="user-profile-header d-flex flex-column flex-sm-row text-sm-start text-center mb-4">
+                            <div class="flex-shrink-0 mt-n2 mx-sm-0 mx-auto">
+
+                                <img src="/theme/assets/img/avatars/blank-profile-picture.png" id="userimage" class="d-block h-auto ms-0 ms-sm-4 user-profile-img" style="max-height: 150px; border-radius: 10px; margin-top: 30px;">
+                            </div>
+                            <div class="flex-grow-1 mt-3 mt-sm-5">
+                                <div class="d-flex align-items-md-end align-items-sm-start align-items-center justify-content-md-between justify-content-start mx-4 flex-md-row flex-column gap-4">
+                                    <div class="user-profile-info">
+                                        <h4>@Html.DisplayFor(model => model.personaldto.Name) @Html.DisplayFor(model => model.personaldto.Surname)</h4>
+                                        <ul class="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-2">
+
+
+
+                                            <li class="list-inline-item d-flex gap-1">
+                                                @Html.DisplayFor(model => model.personaldto.Scope) Personeli
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <a href="tel:@Html.DisplayFor(model => model.personaldto.PhoneNumber)" class="btn btn-primary waves-effect waves-light">
+                                        <i class="bi bi-telephone-forward"></i>
+                                        &nbsp; &nbsp; Personeli Ara
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ Header -->
+            <!-- User Profile Content -->
+            <div class="row">
+                <div class="col-xl-4 col-lg-5 col-md-5">
+                    <!-- About User -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <small class="card-text text-uppercase">Personel Bilgileri</small>
+                            <ul class="list-unstyled mb-4 mt-3">
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-person"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.personaldto.Name) @Html.DisplayNameFor(model => model.personaldto.Surname):</span> <span>@Html.DisplayFor(model => model.personaldto.Name) @Html.DisplayFor(model => model.personaldto.Surname)</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-envelope"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.personaldto.Mail):</span> <span>@Html.DisplayFor(model => model.personaldto.Mail)</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-telephone"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.personaldto.PhoneNumber):</span> <span>@Html.DisplayFor(model => model.personaldto.PhoneNumber)</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-gender-ambiguous"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.personaldto.Gender):</span> <span>@Html.DisplayFor(model => model.personaldto.Gender)</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-calendar-check"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.personaldto.DateOfBirth):</span> <span>@Html.DisplayFor(model => model.personaldto.DateOfBirth)</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-crosshair"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.personaldto.Scope):</span> <span>@Html.DisplayFor(model => model.personaldto.Scope)</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-geo-alt-fill"></i><span class="fw-medium mx-2 text-heading">@Html.DisplayNameFor(model => model.personaldto.Address):</span> <span>@Html.DisplayFor(model => model.personaldto.Address)</span>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                    <!--/ About User -->
+                    <!-- Profile Overview -->
+                    <!--/ Profile Overview -->
+                </div>
+                <div class="col-xl-8 col-lg-7 col-md-7">
+                    <div class="card card-action mb-4" style="padding-bottom:30px">
+                        <div class="card-header align-items-center">
+                            <h5 class="card-action-title mb-0">İşlemine Girdiği Hastalar</h5>
+
+                        </div>
+                        <div class="card-body pb-0">
+                            <table id="example" class="display" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>S.Nu</th>
+                                        <th>Adı</th>
+                                        <th>Soyadı</th>
+                                        <th>Operasyon Tarihi</th>
+                                        <th>Teknik</th>
+                                        <th>Greft Sayısı</th>
+                                        <th></th>
+
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+
+                                    @foreach (var item in Model.operationlist)
+                                    {
+
+                                        <tr>
+                                            <td data-order="1561723222">@item.PatientID</td>
+                                            <td>@item.Patient.Name</td>
+                                            <td>@item.Patient.Surname</td>
+                                            <td>@item.OperationDate.ToShortDateString()</td>
+                                            <td>@item.Technique</td>
+                                            <td>@item.GreftCount</td>
+
+                                            <td>
+                                                <a asp-action="PatientDetails" asp-route-id="@item.PatientID" asp-controller="Patient" class="btn btn-primary waves-effect waves-light">Detay</a>
+                                            </td>
+
+                                        </tr>
+                                    }
+
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+
+
+
+
+
+
+                </div>
+            </div>
+            <!--/ User Profile Content -->
+        </div>
+
+
+
+    </div>
+</div>
+
+
+
+<script>
+
+    $('#example').DataTable({
+        language: {
+            info: "_TOTAL_ kayıttan _START_ - _END_ kayıt gösteriliyor.",
+            infoEmpty: "Gösterilecek hiç kayıt yok.",
+            loadingRecords: "Kayıtlar yükleniyor.",
+            zeroRecords: "Herhangi bir sonuç bulunamadı",
+            search: "Arama:",
+            infoFiltered: "(toplam _MAX_ kayıttan filtrelenenler)",
+            buttons: {
+                copyTitle: "Panoya kopyalandı.",
+                copySuccess: "Panoya %d satır kopyalandı",
+                copy: "Kopyala",
+                print: "Yazdır",
+            },
+
+            paginate: {
+                first: "İlk",
+                previous: "Önceki",
+                next: "Sonraki",
+                last: "Son"
+            },
+        },
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'excel', 'pdf', 'print'
+        ],
+
+        responsive: true
+
+    });
+
+</script>
+
+
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+

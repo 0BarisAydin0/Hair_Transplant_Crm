@@ -1,0 +1,43 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+
+/*_admin Layout sweet alert start*/
+h2#swal2-title {
+    font-size: revert-layer;
+}
+
+/*_admin Layout sweet alert end*/
+
+
+li#errormessage {
+    list-style: none;
+}
+
+/* CSS used here will be applied after bootstrap.css */
+.ekko-lightbox-nav-overlay a {
+    color: goldenrod;
+}
+
+.gallery-title {
+    text-align: center;
+    font-weight: 500;
+    border-bottom: 1px dotted orange;
+    margin-top: 1em;
+}
