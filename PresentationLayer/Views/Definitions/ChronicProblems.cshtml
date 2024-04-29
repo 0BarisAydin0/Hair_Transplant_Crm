@@ -1,6 +1,9 @@
-﻿@{
+﻿@model List<ChronicProblems>
+@{
     ViewData["Title"] = "ChronicProblems";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int count = 0;
+
 }
 
 
@@ -18,62 +21,201 @@
 
 
 <div>
-    <a href="/Patient/PatientAdd" class="btn btn-success waves-effect waves-light">Hasta Ekle</a>
-
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
+        Ekle
+    </button>
 </div>
 <br />
 
 <table id="example" class="display" style="width:100%">
     <thead>
         <tr>
-            <th>Dosya No</th>
-            <th>Adı</th>
-            <th>Soyadı</th>
-            <th>Doğum Tarihi</th>
-            <th>Telefon</th>
-            <th>Ülkesi</th>
+            <th>S.Nu</th>
+            <th>Başlık</th>
+            <th></th>
+            <th></th>
 
-            <th></th>
-            <th></th>
-            <th></th>
 
         </tr>
     </thead>
     <tbody>
+
         @foreach (var item in Model)
         {
-
+           
+            count++;
             <tr>
-                <td data-order="1561723222">@item.PatientID</td>
-                <td>@item.Name</td>
-                <td>@item.Surname</td>
-                <td>@item.DateOfBirth.ToShortDateString()</td>
-                <td>@item.PhoneNumber</td>
-                <td>@item.Country</td>
-               
+                @*  <td data-order="1561723222" id="ChronicProblemsID">@item.ChronicProblemsID</td>*@
+                @* <td>@(Model.IndexOf(item) + 1)</td> Bu yöntem le de sıra numarası verilebilir*@
+                <td>@count</td>
+                <td data-title="@item.Title">@item.Title</td>
+ 
                 <td>
-                    <a asp-action="PatientDetails" asp-route-id="@item.PatientID"  asp-controller="Patient" class="btn btn-primary waves-effect waves-light">Detay</a>
+                    <a onclick="chronicproblemupdate('@item.ChronicProblemsID')" id="guncelle_@item.ChronicProblemsID" data-toggle="modal" data-target="#exampleModal2" class="btn btn-warning waves-effect waves-light">Güncelle</a>
+
                 </td>
                 <td>
-                    <a asp-action="PatientUpdate" asp-route-id="@item.PatientID" asp-controller="Patient" class="btn btn-warning waves-effect waves-light">Güncelle</a>
-                </td>
-                <td>
-                    <a href="/Patient/PatientDelete/@item.PatientID" class="btn btn-danger waves-effect waves-light">Sil</a>
+                    <a onclick="chronicproblemdelete('@item.ChronicProblemsID')" class="btn btn-danger waves-effect waves-light">Sil</a>
                 </td>
             </tr>
         }
-
-
     </tbody>
 
 </table>
 
 
 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ekle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form -->
+                <form id="myForm" method="post">
+                    <div class="form-group">
+                        <label>Başlık:</label>
+                        <input type="text" class="form-control" id="Title">
+                    </div>
+                    
+                    <!-- Add more form fields here -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                <!-- Button to Submit Form -->
+                <button type="button" class="btn btn-primary" onclick="submitForm()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel2">Güncelle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form -->
+                <form id="myForm2" method="post">
+
+                    <input type="text" class="form-control" id="ChronicProblemsID" value="">
+                    <div class="form-group">
+                        <label>Ad:</label>
+                        <input type="text" class="form-control" id="TitleUpdate" value="">
+                    </div>                  
+        
+                    <!-- Add more form fields here -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                <!-- Button to Submit Form -->
+                <button type="button" class="btn btn-primary" onclick="submitForm2()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+@* <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> *@
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Function to Submit Form
+    function submitForm() {
+        var formData = {            
+            Title: $("#Title").val(),
+            Add: true
+            // Diğer form verileri buraya eklenebilir
+        };
+
+        $.ajax({
+            url: "/Definitions/ChronicProblems",
+            type: "POST",
+            data: JSON.stringify(formData),
+            contentType: 'application/json',
+            success: function (response) {
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+               
+            }
+        });
+    }
+       
+    function chronicproblemupdate(chronicProblemsID) {
+        var title = $("#guncelle_" + chronicProblemsID).closest("tr").find("td[data-title]").data("title");
+        $("#ChronicProblemsID").val(chronicProblemsID);
+        $("#TitleUpdate").val(title);
+
+        // Başlık ve ChronicProblemsID değerlerini modal içindeki giriş alanlarına yerleştir
+        $("#myForm2 #ChronicProblemsID").val(chronicProblemsID);
+        $("#myForm2 #TitleUpdate").val(title);
+    }
+
+    function submitForm2() {
+        // Form bilgilerini al
+        var chronicProblemsID = $("#ChronicProblemsID").val();
+        var title = $("#TitleUpdate").val();
+        var Update = true;
+
+        // HTTP isteği yap
+        $.ajax({
+            url: '/Definitions/ChronicProblems', // Controller ve action adınıza göre değiştirin
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({ ChronicProblemsID: chronicProblemsID, Title: title, Update:true }),
+            success: function (response) {
+                // Başarılı yanıt alındığında yapılacak işlemler
+                // Örneğin, modalı kapatmak
+                $("#exampleModal2").modal("hide");
+                location.reload();
+                // Sayfayı yeniden yüklemek veya başka bir işlem yapmak için gerekirse buraya ekleyebilirsiniz
+            },
+            error: function (xhr, status, error) {
+                // Hata durumunda yapılacak işlemler
+                console.error(error);
+                // Hata mesajını kullanıcıya gösterebilirsiniz
+            }
+        });
+    }
+
+
+    </script>
+
+
 <script>
 
+    function chronicproblemdelete(id) {
+        $.ajax({
+            url: '/Definitions/ChronicProblems',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({ ChronicProblemsID: id }), // Doğru özellik adı
+            success: function (data) {
+                location.reload();
+            },
+            error: function (error) {
+                // Hata yanıtını işleyin
+            }
+        });
+    }
+
+
     $('#example').DataTable({
-        
         language: {
             info: "_TOTAL_ kayıttan _START_ - _END_ kayıt gösteriliyor.",
             infoEmpty: "Gösterilecek hiç kayıt yok.",
@@ -83,11 +225,10 @@
             infoFiltered: "(toplam _MAX_ kayıttan filtrelenenler)",
             buttons: {
                 copyTitle: "Panoya kopyalandı.",
-                copySuccess: "Panoya %d satır kopyalandı",
+                copySuccess: "%d satır panoya kopyalandı",
                 copy: "Kopyala",
                 // print: "Yazdır",
             },
-
             paginate: {
                 first: "İlk",
                 previous: "Önceki",
@@ -99,20 +240,7 @@
         buttons: [
             'copy', 'excel', 'pdf'/* , 'print' */
         ],
-
         responsive: true
-
     });
 
-
-   
-
 </script>
-
-
-
-<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-
-
