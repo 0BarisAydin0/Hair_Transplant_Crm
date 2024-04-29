@@ -81,5 +81,80 @@ namespace PresentationLayer.Controllers
             }
 
         }
+
+
+      
+
+        [HttpGet]
+        public IActionResult InfectiousDisease()
+        {
+            var list = context.InfectiousDiseases.ToList();
+            return View(list);
+        }
+
+        [HttpPost]
+        public IActionResult InfectiousDisease([FromBody] InfectiousDiseasesDTOs ınfectiousDiseasesDTOs)
+        {
+
+            if (ınfectiousDiseasesDTOs.Add == true)
+            {
+                try
+                {
+                    // Veritabanına ekleme işlemi
+                    InfectiousDisease infectiousDisease = new InfectiousDisease
+                    {
+                        Title = ınfectiousDiseasesDTOs.Title
+                        // Diğer özellikleri buraya ekle
+                    };
+
+                    // Veritabanı işlemi
+                    context.InfectiousDiseases.Add(infectiousDisease);
+                    context.SaveChanges();
+                    TempData["Message"] = "add";
+                    return Ok(new { success = true, message = "Ekleme işlemi başarılı!" });
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest("Ekleme işlemi başarısız! Hata: " + ex.Message);
+                }
+            }
+            if (ınfectiousDiseasesDTOs.Update == true)
+            {
+                var infectiousDisease = context.InfectiousDiseases.FirstOrDefault(cp => cp.InfectiousDiseaseID == ınfectiousDiseasesDTOs.InfectiousDiseaseID);
+
+                try
+                {
+                    if (infectiousDisease == null)
+                    {
+                        return NotFound("Güncellenecek kayıt bulunamadı.");
+                    }
+                    infectiousDisease.Title = ınfectiousDiseasesDTOs.Title;
+                    context.SaveChanges();
+
+                    TempData["Message"] = "update";
+                    return Ok(new { success = true, message = "Güncelleme işlemi başarılı!" });
+                }
+                catch (Exception ex)
+                {
+
+                    return BadRequest("Güncelleme işlemi başarısız! Hata: " + ex.Message);
+                }
+            }
+            else
+            {
+                var id = ınfectiousDiseasesDTOs.InfectiousDiseaseID;
+                var problem = context.InfectiousDiseases.FirstOrDefault(x => x.InfectiousDiseaseID == id);
+
+                if (problem != null)
+                {
+                    context.InfectiousDiseases.Remove(problem);
+                    context.SaveChanges();
+                    TempData["Message"] = "delete";
+                    return Ok(new { success = true, message = "Silme işlemi başarılı!" });
+                }
+                return BadRequest("Geçersiz veri alındı");
+            }
+
+        }
     }
 }
