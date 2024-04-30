@@ -9,7 +9,7 @@ using System.ComponentModel;
 
 namespace EntityLayer.Definition
 {
-    public class ReminderDate
+    public class ReminderDate: BaseEntity
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
@@ -22,7 +22,6 @@ namespace EntityLayer.Definition
         [DisplayName("Hatırlatma Zamanı Periyodu")]
         public string? RemindDayCountName { get; set; }
 
-        public bool IsActive { get; set; } = true;
 
 
         

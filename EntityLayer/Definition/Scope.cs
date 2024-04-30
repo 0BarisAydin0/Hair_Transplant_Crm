@@ -9,7 +9,7 @@ using System.ComponentModel;
 
 namespace EntityLayer.Definition
 {
-    public class Scope
+    public class Scope : BaseEntity
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ScopeID { get; set; }

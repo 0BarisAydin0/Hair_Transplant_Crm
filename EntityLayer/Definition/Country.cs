@@ -9,7 +9,7 @@ using System.ComponentModel;
 
 namespace EntityLayer.Definition
 {
-    public class Country
+    public class Country: BaseEntity
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CountryID { get; set; }

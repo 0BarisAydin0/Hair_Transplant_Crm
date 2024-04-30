@@ -9,7 +9,7 @@ using System.ComponentModel;
 
 namespace EntityLayer.Definition
 {
-    public class Currency
+    public class Currency: BaseEntity
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CurrencyID { get; set; }

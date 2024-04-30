@@ -9,7 +9,7 @@ using System.ComponentModel;
 
 namespace EntityLayer.Definition
 {
-    public class Technique
+    public class Technique : BaseEntity
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int TechniqueID { get; set; }

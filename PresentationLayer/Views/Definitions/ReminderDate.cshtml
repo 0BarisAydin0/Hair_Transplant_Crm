@@ -1,9 +1,11 @@
-﻿@model List<InfectiousDisease>
+﻿@model List<ReminderDate>
+
 @{
-    ViewData["Title"] = "InfectiousDisease";
-    Layout = "~/Views/Shared/_AdminLayout.cshtml"; 
+    ViewData["Title"] = "ReminderDate";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
     int count = 0;
 }
+
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
@@ -17,7 +19,6 @@
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 
 
-
 <div>
     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
         Ekle
@@ -29,9 +30,10 @@
     <thead>
         <tr>
             <th>S.Nu</th>
+            <th>Süre(Gün)</th>
             <th>Başlık</th>
             <th></th>
-             <th></th> 
+            <th></th>
 
 
         </tr>
@@ -45,15 +47,15 @@
             <tr>
                
                 <td>@count</td>
-                <td data-title="@item.Title">@item.Title</td>
+                <td data-count="@item.RemindDayCount">@item.RemindDayCount</td>
+                <td data-name="@item.RemindDayCountName">@item.RemindDayCountName</td>
 
                 <td>
-                    <a onclick="problemupdate('@item.InfectiousDiseaseID')" id="guncelle_@item.InfectiousDiseaseID" data-toggle="modal" data-target="#exampleModal2" class="btn btn-warning waves-effect waves-light">Güncelle</a>
-
+                    <a onclick="updateReminder('@item.ReminderDateID')" id="guncelle_@item.ReminderDateID" data-toggle="modal" data-target="#exampleModal2" class="btn btn-warning waves-effect waves-light">Güncelle</a>
                 </td>
-                 <td>
-                    <a onclick="problemdelete('@item.InfectiousDiseaseID')" class="btn btn-danger waves-effect waves-light">Sil</a>
-                </td> 
+                <td>
+                    <a onclick="deleteReminder('@item.ReminderDateID')" class="btn btn-danger waves-effect waves-light">Sil</a>
+                </td>
             </tr>
         }
     </tbody>
@@ -76,8 +78,12 @@
                 <!-- Form -->
                 <form id="myForm" method="post">
                     <div class="form-group">
+                        <label>Süre(Gün):</label>
+                        <input type="number" class="form-control" id="Count">
+                    </div>
+                    <div class="form-group">
                         <label>Başlık:</label>
-                        <input type="text" class="form-control" id="Title">
+                        <input type="text" class="form-control" id="CountName">
                     </div>
 
                     <!-- Add more form fields here -->
@@ -105,10 +111,14 @@
                 <!-- Form -->
                 <form id="myForm2" method="post">
 
-                    <input type="text" class="form-control" id="InfectiousDiseaseID" value="" hidden>
+                    <input type="text" class="form-control" id="ReminderID" value="" hidden>
+                    <div class="form-group">
+                        <label>Süre(Gün):</label>
+                        <input type="number" class="form-control" id="CountUpdate">
+                    </div>
                     <div class="form-group">
                         <label>Başlık:</label>
-                        <input type="text" class="form-control" id="TitleUpdate" value="">
+                        <input type="text" class="form-control" id="CountNameUpdate">
                     </div>
 
                     <!-- Add more form fields here -->
@@ -117,7 +127,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
                 <!-- Button to Submit Form -->
-                <button type="button" class="btn btn-primary" onclick="submitForm2()">Kaydet</button>
+                <button type="button" class="btn btn-primary" onclick="updateform()">Güncelle</button>
             </div>
         </div>
     </div>
@@ -129,16 +139,17 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
-    // Function to Submit Form
+    
     function submitForm() {
         var formData = {
-            Title: $("#Title").val(),
+            RemindDayCount: $("#Count").val(),
+            RemindDayCountName: $("#CountName").val(),
             Add: true
-            // Diğer form verileri buraya eklenebilir
+        
         };
 
         $.ajax({
-            url: "/Definitions/InfectiousDisease",
+            url: "/Definitions/ReminderDate",
             type: "POST",
             data: JSON.stringify(formData),
             contentType: 'application/json',
@@ -151,29 +162,34 @@
         });
     }
 
-    function problemupdate(ProblemsID) {
-        var title = $("#guncelle_" + ProblemsID).closest("tr").find("td[data-title]").data("title");
-        $("#InfectiousDiseaseID").val(ProblemsID);
-        $("#TitleUpdate").val(title);
+    function updateReminder(id) { 
+        var count = $("#guncelle_" + id).closest("tr").find("td[data-count]").data("count");
+        var countName = $("#guncelle_" + id).closest("tr").find("td[data-name]").data("name");
+        // $("#ReminderID").val(id);
+        // $("#Count").val(count);
+        // $("#CountName").val(countName);
+    debugger;
 
         // Başlık ve ChronicProblemsID değerlerini modal içindeki giriş alanlarına yerleştir
-        $("#myForm2 #InfectiousDiseaseID").val(ProblemsID);
-        $("#myForm2 #TitleUpdate").val(title);
+        $("#myForm2 #ReminderID").val(id);
+        $("#myForm2 #CountUpdate").val(count);
+        $("#myForm2 #CountNameUpdate").val(countName);
     }
 
-    function submitForm2() {
-        // Form bilgilerini al
-        var ProblemsID = $("#InfectiousDiseaseID").val();
-        var title = $("#TitleUpdate").val();
+    function updateform() {
+        
+        var ReminderID = $("#ReminderID").val();
+        var countupdate = $("#CountUpdate").val();
+        var countNameupdate = $("#CountNameUpdate").val();
         var Update = true;
 
         // HTTP isteği yap
         $.ajax({
-            url: '/Definitions/InfectiousDisease', // Controller ve action adınıza göre değiştirin
+            url: '/Definitions/ReminderDate', // Controller ve action adınıza göre değiştirin
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify({ InfectiousDiseaseID: ProblemsID, Title: title, Update: true }),
+            data: JSON.stringify({ ReminderDateID: ReminderID, RemindDayCount: countupdate, RemindDayCountName: countNameupdate, Update: true }),
             success: function (response) {
                 // Başarılı yanıt alındığında yapılacak işlemler
                 // Örneğin, modalı kapatmak
@@ -195,13 +211,13 @@
 
 <script>
 
-    function problemdelete(id) {
+    function deleteReminder(id) {
         $.ajax({
-            url: '/Definitions/InfectiousDisease',
+            url: '/Definitions/ReminderDate',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify({ InfectiousDiseaseID: id }), // Doğru özellik adı
+            data: JSON.stringify({ ReminderDateID: id }), // Doğru özellik adı
             success: function (data) {
                 location.reload();
             },
