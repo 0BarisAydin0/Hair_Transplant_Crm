@@ -1,0 +1,118 @@
+﻿@model List<Offer>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int count = 0;
+}
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+
+
+
+<table id="example" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th hidden></th>
+            <th>S.No</th>
+            <th>Teknik</th>
+            <th>Greft</th>
+            <th>Fiyat</th>
+            @* <th>Not</th> *@
+            <th>İlgili Hasta</th>
+            <th>Teklif Başlangıç</th>
+            <th>Teklif Bitiş</th>
+
+            <th></th>
+
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            count++;
+            <tr>
+                <td data-order="1561723222" hidden>@item.OfferID</td>
+                <td>@count</td>
+                <td>@item.Technique</td>
+                <td>@item.GreftCount</td>
+                <td>@item.Price</td>
+                @* <td><textarea rows="2" class="badge bg-label-primary me-1">@item.Note</textarea></td> *@
+                <td>@item.Patient.Name @item.Patient.Surname</td>
+                <td>@item.OfferStartDate.ToShortDateString() </td>
+                <td>@item.OfferEndDate.ToShortDateString() </td>
+
+                <td>
+                    <a asp-action="PatientDetails" asp-route-id="@item.PatientID" asp-controller="Patient" class="btn btn-primary waves-effect waves-light">Detay</a>
+                </td>
+                @* <td>
+                    <a asp-action="PatientUpdate" asp-route-id="@item.PatientID" asp-controller="Patient" class="btn btn-warning waves-effect waves-light">Güncelle</a>
+                </td> *@
+                @* <td>
+                    <a href="/Patient/PatientDelete/@item.PatientID" class="btn btn-danger waves-effect waves-light">Sil</a>
+                </td> *@
+            </tr>
+        }
+
+
+    </tbody>
+
+</table>
+
+
+
+<script>
+
+    $('#example').DataTable({
+
+        language: {
+            info: "_TOTAL_ kayıttan _START_ - _END_ kayıt gösteriliyor.",
+            infoEmpty: "Gösterilecek hiç kayıt yok.",
+            loadingRecords: "Kayıtlar yükleniyor.",
+            zeroRecords: "Herhangi bir sonuç bulunamadı",
+            search: "Arama:",
+            infoFiltered: "(toplam _MAX_ kayıttan filtrelenenler)",
+            buttons: {
+                copyTitle: "Panoya kopyalandı.",
+                copySuccess: "Panoya %d satır kopyalandı",
+                copy: "Kopyala",
+                // print: "Yazdır",
+            },
+
+            paginate: {
+                first: "İlk",
+                previous: "Önceki",
+                next: "Sonraki",
+                last: "Son"
+            },
+        },
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'excel', 'pdf'/* , 'print' */
+        ],
+
+        responsive: true
+
+    });
+
+
+
+
+</script>
+
+
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>

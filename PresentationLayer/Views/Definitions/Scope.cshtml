@@ -1,0 +1,244 @@
+﻿@model List<Scope>
+@{
+    ViewData["Title"] = "Scope";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int count = 0;
+}
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+
+
+<div>
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
+        Ekle
+    </button>
+</div>
+<br />
+
+<table id="example" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>S.Nu</th>
+            <th>Başlık</th>
+            <th></th>
+            <th></th>
+
+
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+
+            count++;
+            <tr>
+
+                <td>@count</td>
+                <td data-title="@item.Title">@item.Title</td>
+
+                <td>
+                    <a onclick="problemupdate('@item.ScopeID')" id="guncelle_@item.ScopeID" data-toggle="modal" data-target="#exampleModal2" class="btn btn-warning waves-effect waves-light">Güncelle</a>
+
+                </td>
+                <td>
+                    <a onclick="problemdelete('@item.ScopeID')" class="btn btn-danger waves-effect waves-light">Sil</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ekle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form -->
+                <form id="myForm" method="post">
+                    <div class="form-group">
+                        <label>Başlık:</label>
+                        <input type="text" class="form-control" id="Title">
+                    </div>
+
+                    <!-- Add more form fields here -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                <!-- Button to Submit Form -->
+                <button type="button" class="btn btn-primary" onclick="submitForm()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel2">Güncelle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form -->
+                <form id="myForm2" method="post">
+
+                    <input type="text" class="form-control" id="ScopeID" value="" hidden>
+                    <div class="form-group">
+                        <label>Başlık:</label>
+                        <input type="text" class="form-control" id="TitleUpdate" value="">
+                    </div>
+
+                    <!-- Add more form fields here -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                <!-- Button to Submit Form -->
+                <button type="button" class="btn btn-primary" onclick="submitForm2()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+@* <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> *@
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // Function to Submit Form
+    function submitForm() {
+        var formData = {
+            Title: $("#Title").val(),
+            Add: true
+          
+        };
+
+        $.ajax({
+            url: "/Definitions/Scope",
+            type: "POST",
+            data: JSON.stringify(formData),
+            contentType: 'application/json',
+            success: function (response) {
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+
+            }
+        });
+    }
+
+    function problemupdate(ProblemsID) {
+        var title = $("#guncelle_" + ProblemsID).closest("tr").find("td[data-title]").data("title");
+        $("#ScopeID").val(ProblemsID);
+        $("#TitleUpdate").val(title);
+
+        
+        $("#myForm2 #ScopeID").val(ProblemsID);
+        $("#myForm2 #TitleUpdate").val(title);
+    }
+
+    function submitForm2() {
+       
+        var ProblemsID = $("#ScopeID").val();
+        var title = $("#TitleUpdate").val();
+        var Update = true;
+
+      
+        $.ajax({
+            url: '/Definitions/Scope', 
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({ ScopeID: ProblemsID, Title: title, Update: true }),
+            success: function (response) {
+                
+                $("#exampleModal2").modal("hide");
+                location.reload();
+               
+            },
+            error: function (xhr, status, error) {
+                
+                console.error(error);
+              
+            }
+        });
+    }
+
+
+</script>
+
+
+<script>
+
+    function problemdelete(id) {
+        $.ajax({
+            url: '/Definitions/Scope',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({ ScopeID: id }), 
+            success: function (data) {
+                location.reload();
+            },
+            error: function (error) {
+                
+            }
+        });
+    }
+
+
+    $('#example').DataTable({
+        language: {
+            info: "_TOTAL_ kayıttan _START_ - _END_ kayıt gösteriliyor.",
+            infoEmpty: "Gösterilecek hiç kayıt yok.",
+            loadingRecords: "Kayıtlar yükleniyor.",
+            zeroRecords: "Herhangi bir sonuç bulunamadı",
+            search: "Arama:",
+            infoFiltered: "(toplam _MAX_ kayıttan filtrelenenler)",
+            buttons: {
+                copyTitle: "Panoya kopyalandı.",
+                copySuccess: "%d satır panoya kopyalandı",
+                copy: "Kopyala",
+                // print: "Yazdır",
+            },
+            paginate: {
+                first: "İlk",
+                previous: "Önceki",
+                next: "Sonraki",
+                last: "Son"
+            },
+        },
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'excel', 'pdf'/* , 'print' */
+        ],
+        responsive: true
+    });
+
+</script>
+

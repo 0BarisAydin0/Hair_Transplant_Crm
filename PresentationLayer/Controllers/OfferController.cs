@@ -4,6 +4,7 @@ using DataAccessLayer.Concrate;
 using DataAccessLayer.DTOs;
 using EntityLayer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace PresentationLayer.Controllers
 {
@@ -43,6 +44,14 @@ namespace PresentationLayer.Controllers
             _offerDAL.Create(offer);
 
             return RedirectToAction("PatientDetails", "Patient" , new { id = offer.PatientID });
+        }
+
+        [HttpGet]
+        public IActionResult Index() 
+        {
+            var offer=context.Offers.Include(x=>x.Patient).Where(x=>x.IsActive==true).ToList();
+            var list = _offerDAL.GetAll(x => x.IsActive == true);
+            return View(offer);
         }
     }
 }

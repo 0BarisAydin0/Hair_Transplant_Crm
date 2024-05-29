@@ -224,5 +224,150 @@ namespace PresentationLayer.Controllers
             }
 
         }
+
+
+        [HttpGet]
+        public IActionResult Scope()
+        {
+            var list = context.Scopes.Where(x => x.IsActive == true).ToList();
+            return View(list);
+        }
+
+        [HttpPost]
+        public IActionResult Scope([FromBody] ScopeDTOs scopeDTOs)
+        {
+
+            if (scopeDTOs.Add == true)
+            {
+                try
+                {
+                    // Veritabanına ekleme işlemi
+                    Scope scope = new Scope
+                    {
+                        Title = scopeDTOs.Title
+                        // Diğer özellikleri buraya ekle
+                    };
+
+                    // Veritabanı işlemi
+                    context.Scopes.Add(scope);
+                    context.SaveChanges();
+                    TempData["Message"] = "add";
+                    return Ok(new { success = true, message = "Ekleme işlemi başarılı!" });
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest("Ekleme işlemi başarısız! Hata: " + ex.Message);
+                }
+            }
+            if (scopeDTOs.Update == true)
+            {
+                var scope = context.Scopes.FirstOrDefault(cp => cp.ScopeID == scopeDTOs.ScopeID);
+
+                try
+                {
+                    if (scope == null)
+                    {
+                        return NotFound("Güncellenecek kayıt bulunamadı.");
+                    }
+                    scope.Title = scopeDTOs.Title;
+                    context.SaveChanges();
+
+                    TempData["Message"] = "update";
+                    return Ok(new { success = true, message = "Güncelleme işlemi başarılı!" });
+                }
+                catch (Exception ex)
+                {
+
+                    return BadRequest("Güncelleme işlemi başarısız! Hata: " + ex.Message);
+                }
+            }
+            else
+            {
+
+                var scopeDelete = context.Scopes.FirstOrDefault(x => x.ScopeID == scopeDTOs.ScopeID);
+
+                if (scopeDelete != null)
+                {
+                    scopeDelete.IsActive = false;
+                    context.SaveChanges();
+                    TempData["Message"] = "delete";
+                    return Ok(new { success = true, message = "Silme işlemi başarılı!" });
+                }
+                return BadRequest("Geçersiz veri alındı");
+            }
+
+        }
+
+
+        [HttpGet]
+        public IActionResult Technique()
+        {
+            var list = context.Techniques.Where(x => x.IsActive == true).ToList();
+            return View(list);
+        }
+
+        [HttpPost]
+        public IActionResult Technique([FromBody] TechniqueDTOs techniqueDTOs)
+        {
+
+            if (techniqueDTOs.Add == true)
+            {
+                try
+                {
+                  
+                    Technique technique = new Technique
+                    {
+                        Title = techniqueDTOs.Title                      
+                    };
+
+                    // Veritabanı işlemi
+                    context.Techniques.Add(technique);
+                    context.SaveChanges();
+                    TempData["Message"] = "add";
+                    return Ok(new { success = true, message = "Ekleme işlemi başarılı!" });
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest("Ekleme işlemi başarısız! Hata: " + ex.Message);
+                }
+            }
+            if (techniqueDTOs.Update == true)
+            {
+                var technique = context.Techniques.FirstOrDefault(cp => cp.TechniqueID == techniqueDTOs.TechniqueID);
+
+                try
+                {
+                    if (technique == null)
+                    {
+                        return NotFound("Güncellenecek kayıt bulunamadı.");
+                    }
+                    technique.Title = techniqueDTOs.Title;
+                    context.SaveChanges();
+
+                    TempData["Message"] = "update";
+                    return Ok(new { success = true, message = "Güncelleme işlemi başarılı!" });
+                }
+                catch (Exception ex)
+                {
+
+                    return BadRequest("Güncelleme işlemi başarısız! Hata: " + ex.Message);
+                }
+            }
+            else
+            {
+
+                var techniqueDelete = context.Techniques.FirstOrDefault(x => x.TechniqueID == techniqueDTOs.TechniqueID);
+
+                if (techniqueDelete != null)
+                {
+                    techniqueDelete.IsActive = false;
+                    context.SaveChanges();
+                    TempData["Message"] = "delete";
+                    return Ok(new { success = true, message = "Silme işlemi başarılı!" });
+                }
+                return BadRequest("Geçersiz veri alındı");
+            }
+
+        }
     }
 }
