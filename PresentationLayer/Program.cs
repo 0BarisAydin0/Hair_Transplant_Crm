@@ -1,44 +1,97 @@
-using BusinessLayer;
+﻿using BusinessLayer;
 using BusinessLayer.Abstract;
 using BusinessLayer.Concrate;
 using BusinessLayer.ValidationRules;
 using DataAccessLayer.Abstract;
 using DataAccessLayer.Concrate;
 using DataAccessLayer.EntityFramework;
+using DataAccessLayer.Services;
 using EntityLayer;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Build.Evaluation;
+using PresentationLayer.Services;
 using System.Text.Unicode;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
-
-
-//fluent validator
-builder.Services.AddFluentValidationAutoValidation(M =>
+//proje bazında authorize
+builder.Services.AddControllersWithViews(options =>
 {
-    M.DisableDataAnnotationsValidation = true;
+    var policy = new AuthorizationPolicyBuilder()
+                     .RequireAuthenticatedUser()
+                     .Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
+}).AddRazorRuntimeCompilation();
+
+
+// Add services to the container.
+//builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+// Fluent validation
+builder.Services.AddFluentValidationAutoValidation(m =>
+{
+m.DisableDataAnnotationsValidation = true;
 }).AddFluentValidationClientsideAdapters()
   .AddValidatorsFromAssemblyContaining<PersonalAddValidation>();
 
-
-
-//t�rk�e karakter sorunu i�in
+// Türkçe karakter sorunu için
 builder.Services.AddWebEncoders(o => {
-    o.TextEncoderSettings = new System.Text.Encodings.Web.TextEncoderSettings(UnicodeRanges.All);
+o.TextEncoderSettings = new System.Text.Encodings.Web.TextEncoderSettings(UnicodeRanges.All);
 });
 
-
+// Database context ve Identity ayarları
 builder.Services.AddDbContext<Context>();
-builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<Context>();
+builder.Services.AddIdentity<AppUser, AppRole>(options => {
+options.Password.RequireDigit = false;
+options.Password.RequiredLength = 4;
+options.Password.RequireNonAlphanumeric = false;
+options.Password.RequireUppercase = false;
+options.Password.RequireLowercase = false;
+})
+    .AddEntityFrameworkStores<Context>()
+    .AddDefaultTokenProviders()
+    .AddErrorDescriber<CustomIdentityValidator>();
 
-builder.Services.AddCustomServices(); //dependency class�m�n�n metodunu �al��t�rd�k
+builder.Services.AddCustomServices(); // Dependency class'ınızın metodunu çalıştırdık
 
+// EmailSend Dependency Injection
+builder.Configuration.AddJsonFile("appsettings.json");
+var smtpSettings = builder.Configuration.GetSection("SmtpSettings").Get<SmtpSettings>();
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
+// Identity ayarları
+builder.Services.Configure<IdentityOptions>(options =>
+{
+options.Lockout.MaxFailedAccessAttempts = 5;
+options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+// Diğer politikalar
+});
+
+// Authorization ayarları
+builder.Services.AddAuthorization(options =>
+{
+options.AddPolicy("AdminPolicy", policy =>
+    policy.RequireRole("Admin"));
+options.AddPolicy("ModeratorPolicy", policy =>
+    policy.RequireRole("Moderator"));
+// Diğer roller buraya eklenebilir
+});
+
+// Application Cookie ayarları
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Login/Login";
+    options.AccessDeniedPath = "/Login/AccessDenied";
+    options.SlidingExpiration = true;
+});
 
 var app = builder.Build();
 
@@ -55,8 +108,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Dashboard}/{action=Index}/{id?}");
