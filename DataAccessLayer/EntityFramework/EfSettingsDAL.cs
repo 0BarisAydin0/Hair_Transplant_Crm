@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.EntityFramework
 {
-    public class EfSettingsDAL:GenericRepository<Settings, Context>, ISettingsDAL
+    public class EfSettingsDAL : GenericRepository<Settings, Context>, ISettingsDAL
     {
     }
 }

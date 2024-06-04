@@ -8,10 +8,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace DataAccessLayer.Concrate
 {
-    public class Context : IdentityDbContext<AppUser, AppRole, int>
+     public class Context : IdentityDbContext<AppUser, AppRole, int>
     {
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -37,6 +38,6 @@ namespace DataAccessLayer.Concrate
         public DbSet<ReminderDate> ReminderDates { get; set; }
         public DbSet<Scope> Scopes { get; set; }
         public DbSet<Technique> Techniques { get; set; }
-        public DbSet<PatientOperationImg> patientOperationImgs{ get; set; }
+        public DbSet<PatientOperationImg> patientOperationImgs { get; set; }
     }
 }
