@@ -20,12 +20,11 @@ namespace BusinessLayer.Concrate
         private readonly Context _context;
         private IPersonalDAL _personalDAL;
 
-        public PersonalManager(IPersonalDAL personalDAL)
+        public PersonalManager(Context context, IPersonalDAL personalDAL)
         {
+            _context = context;
             _personalDAL = personalDAL;
         }
-
-
 
         public async Task<List<Personal>> AsyncGetAll()
         {
