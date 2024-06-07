@@ -14,7 +14,7 @@ namespace BusinessLayer.Concrate
 {
     public class PatientOperationImgManager : IPatientOperationImgService
     {
-        Context context = new Context();
+        private readonly Context _context;
         private IPatientOperationImgDAL _POImgdal;
 
         public PatientOperationImgManager(IPatientOperationImgDAL pOImgdal)

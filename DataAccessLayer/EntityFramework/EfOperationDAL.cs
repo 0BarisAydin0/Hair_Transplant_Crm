@@ -12,5 +12,9 @@ namespace DataAccessLayer.EntityFramework
 {
     public class EfOperationDAL : GenericRepository<Operation, Context>, IOperationDAL
     {
+        public EfOperationDAL(Context context) : base(context)
+        {
+        }
+
     }
 }

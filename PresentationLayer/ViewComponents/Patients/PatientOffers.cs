@@ -6,12 +6,18 @@ namespace PresentationLayer.ViewComponents.Patients
 {
     public class PatientOffers:ViewComponent
     {
-        Context context = new Context();
+        private readonly Context _context;
+
+        public PatientOffers(Context context)
+        {
+            _context = context;
+        }
+
         public IViewComponentResult Invoke(int id)
         {
 
 
-            var offerlist = context.Offers.Where(x => x.PatientID == id).ToList();
+            var offerlist = _context.Offers.Where(x => x.PatientID == id).ToList();
             
 
             return View(offerlist);

@@ -12,5 +12,8 @@ namespace DataAccessLayer.EntityFramework
 {
     public class EfSettingsDAL : GenericRepository<Settings, Context>, ISettingsDAL
     {
+        public EfSettingsDAL(Context context) : base(context)
+        {
+        }
     }
 }

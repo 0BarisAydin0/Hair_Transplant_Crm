@@ -12,5 +12,8 @@ namespace DataAccessLayer.EntityFramework
 {
     public class EfPatientDAL : GenericRepository<Patient, Context>, IPatientDAL
     {
+        public EfPatientDAL(Context context) : base(context)
+        {
+        }
     }
 }

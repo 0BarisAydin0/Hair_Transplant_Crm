@@ -40,7 +40,7 @@
 
                     <div class="col-md-4 fv-plugins-icon-container">
                         <label class="form-label" asp-for="Operation.Currency "></label>
-                        @Html.DropDownListFor(x=>x.Operation.Currency, new SelectList(Model.currencies,  "CurrencyCode", "Title"), "Seçiniz", new { @class = "form-control" })
+                        @Html.DropDownListFor(x=>x.Operation.Currency, new SelectList(Model.Currencies,  "CurrencyCode", "Title"), "Seçiniz", new { @class = "form-control" })
 
                     </div>
 

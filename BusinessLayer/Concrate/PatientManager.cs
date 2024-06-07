@@ -18,73 +18,59 @@ namespace BusinessLayer.Concrate
     public class PatientManager : IPatientService
     {
 
-        Context context = new Context();
-        private IPatientDAL _patientDAL;
+        private readonly IPatientDAL _patientDAL;
+        private readonly Context _context;
 
-
-        public PatientManager(IPatientDAL patientDAL)
+        public PatientManager(IPatientDAL patientDAL, Context context)
         {
-
             _patientDAL = patientDAL;
+            _context = context;
         }
 
         public string CheckCreate(Patient patient)
         {
-            using (var context = new Context())
+            try
             {
-                try
+                Patient p = _context.Patients.FirstOrDefault(
+                    c => c.Mail.ToLower() == patient.Mail.ToLower() &&
+                         c.Name.ToLower() == patient.Name.ToLower() &&
+                         c.Surname.ToLower() == patient.Surname.ToLower() &&
+                         c.PhoneNumber == patient.PhoneNumber
+                );
+
+                if (p == null)
                 {
-                    Patient p = context.Patients
-                        .FirstOrDefault(
-                        c => c.Mail.ToLower() == patient.Mail.ToLower() &&
-                        c.Name.ToLower() == patient.Name.ToLower() &&
-                        c.Surname.ToLower() == patient.Surname.ToLower() &&
-                        c.PhoneNumber == patient.PhoneNumber
-                        );
-
-
-
-                    if (p == null)
-                    {
-                        patient.Mail.ToLower();
-                        context.Add(patient);
-                        context.SaveChanges();
-
-                        return "success";
-
-                    }
-                    else
-                    {
-                        string patid = p.PatientID.ToString();
-                        return patid;
-
-                    }
-
+                    patient.Mail = patient.Mail.ToLower();
+                    _context.Add(patient);
+                    _context.SaveChanges();
+                    return "success";
                 }
-                catch (Exception)
+                else
                 {
-
-                    return "error";
+                    string patid = p.PatientID.ToString();
+                    return patid;
                 }
-
             }
-
+            catch (Exception)
+            {
+                return "error";
+            }
         }
 
         public async Task<List<ChronicProblems>> ChronicProblemsSelect()
         {
-            List<ChronicProblems> cps = await context.ChronicProblems.ToListAsync();
+            List<ChronicProblems> cps = await _context.ChronicProblems.ToListAsync();
             return cps;
         }
 
         public async Task<List<Country>> CountrySelect()
         {
-            List<Country> countries = await context.Countries.ToListAsync();
+            List<Country> countries = await _context.Countries.ToListAsync();
             return countries;
         }
         public async Task<List<InfectiousDisease>> InfectiousDiseaseSelect()
         {
-            List<InfectiousDisease> ifd = await context.InfectiousDiseases.ToListAsync();
+            List<InfectiousDisease> ifd = await _context.InfectiousDiseases.ToListAsync();
             return ifd;
         }
         public void Create(Patient entity)

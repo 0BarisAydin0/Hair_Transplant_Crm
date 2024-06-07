@@ -13,13 +13,19 @@ namespace PresentationLayer.Controllers
     public class HomeController : Controller
     {
 
-        Context context = new Context();
+        private readonly Context _context;
 
 
         private IPersonalService _personalservice;
 
         public HomeController(IPersonalService personalservice)
         {
+            _personalservice = personalservice;
+        }
+
+        public HomeController(Context context, IPersonalService personalservice)
+        {
+            _context = context;
             _personalservice = personalservice;
         }
 

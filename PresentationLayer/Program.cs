@@ -14,7 +14,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Build.Evaluation;
+using Microsoft.EntityFrameworkCore;
 using PresentationLayer.Services;
+using System.Configuration;
 using System.Text.Unicode;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,23 +39,31 @@ builder.Services.AddControllersWithViews(options =>
 // Fluent validation
 builder.Services.AddFluentValidationAutoValidation(m =>
 {
-m.DisableDataAnnotationsValidation = true;
+    m.DisableDataAnnotationsValidation = true;
 }).AddFluentValidationClientsideAdapters()
   .AddValidatorsFromAssemblyContaining<PersonalAddValidation>();
 
 // Türkçe karakter sorunu için
-builder.Services.AddWebEncoders(o => {
-o.TextEncoderSettings = new System.Text.Encodings.Web.TextEncoderSettings(UnicodeRanges.All);
+builder.Services.AddWebEncoders(o =>
+{
+    o.TextEncoderSettings = new System.Text.Encodings.Web.TextEncoderSettings(UnicodeRanges.All);
 });
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Configuration.AddJsonFile("appsettings.json");
+
 // Database context ve Identity ayarları
-builder.Services.AddDbContext<Context>();
-builder.Services.AddIdentity<AppUser, AppRole>(options => {
-options.Password.RequireDigit = false;
-options.Password.RequiredLength = 4;
-options.Password.RequireNonAlphanumeric = false;
-options.Password.RequireUppercase = false;
-options.Password.RequireLowercase = false;
+builder.Services.AddDbContext<Context>(options =>
+{
+    options.UseSqlServer(connectionString);
+});
+builder.Services.AddIdentity<AppUser, AppRole>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 4;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
 })
     .AddEntityFrameworkStores<Context>()
     .AddDefaultTokenProviders()
@@ -62,7 +72,7 @@ options.Password.RequireLowercase = false;
 builder.Services.AddCustomServices(); // Dependency class'ınızın metodunu çalıştırdık
 
 // EmailSend Dependency Injection
-builder.Configuration.AddJsonFile("appsettings.json");
+//builder.Configuration.AddJsonFile("appsettings.json");
 var smtpSettings = builder.Configuration.GetSection("SmtpSettings").Get<SmtpSettings>();
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddTransient<IEmailSender, EmailSender>();
@@ -70,19 +80,19 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 // Identity ayarları
 builder.Services.Configure<IdentityOptions>(options =>
 {
-options.Lockout.MaxFailedAccessAttempts = 5;
-options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
-// Diğer politikalar
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+    // Diğer politikalar
 });
 
 // Authorization ayarları
 builder.Services.AddAuthorization(options =>
 {
-options.AddPolicy("AdminPolicy", policy =>
-    policy.RequireRole("Admin"));
-options.AddPolicy("ModeratorPolicy", policy =>
-    policy.RequireRole("Moderator"));
-// Diğer roller buraya eklenebilir
+    options.AddPolicy("AdminPolicy", policy =>
+        policy.RequireRole("Admin"));
+    options.AddPolicy("ModeratorPolicy", policy =>
+        policy.RequireRole("Moderator"));
+    // Diğer roller buraya eklenebilir
 });
 
 // Application Cookie ayarları
@@ -92,8 +102,59 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Login/AccessDenied";
     options.SlidingExpiration = true;
 });
-
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<DatabaseInitializer>(); // auto migrate scope entegrasyon
 var app = builder.Build();
+
+#region AutoMigrate
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<Context>();
+        context.Database.Migrate(); // Veritabanını güncelle (migrations uygula)
+
+        // Yeni kullanıcı ekleme işlemi
+        var userManager = services.GetRequiredService<UserManager<AppUser>>();
+
+        var existingUser = await userManager.FindByEmailAsync("example@example.com");
+        if (existingUser == null)
+        {
+            var newUser = new AppUser { UserName = "admin@admin.com", Email = "admin@admin.com" };
+            var result = await userManager.CreateAsync(newUser, "Aa12345*");
+            if (result.Succeeded)
+            {
+                // Kullanıcı başarıyla eklendi
+            }
+            else
+            {
+                // Kullanıcı eklenirken bir hata oluştu
+                foreach (var error in result.Errors)
+                {
+                    // Hata mesajlarını loglama veya işleme alma
+                }
+            }
+        }
+        else
+        {
+            // Kullanıcı zaten mevcut
+        }
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Veritabanı migration işlemi sırasında bir hata oluştu.");
+    }
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var databaseInitializer = services.GetRequiredService<DatabaseInitializer>();
+    await databaseInitializer.InitializeDatabaseAsync();
+}
+#endregion
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -114,6 +175,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 
-
-
+//app.UseMiddleware<DatabaseConfigMiddleware>();
+//app.databaseInitializer.InitializeDatabaseAsync().Wait();
 app.Run();

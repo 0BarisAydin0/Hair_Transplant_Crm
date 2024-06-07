@@ -12,5 +12,8 @@ namespace DataAccessLayer.EntityFramework
 {
     public class EfOfferDAL : GenericRepository<Offer, Context>, IOfferDAL
     {
+        public EfOfferDAL(Context context) : base(context)
+        {
+        }
     }
 }

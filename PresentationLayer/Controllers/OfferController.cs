@@ -11,28 +11,29 @@ namespace PresentationLayer.Controllers
     public class OfferController : Controller
     {
 
-        Context context = new Context();
-        OfferDTO offerDTO= new OfferDTO();
-        private IOfferDAL _offerDAL;
-        private IPatientDAL _patientDAL;
+        private readonly Context _context;
+        private readonly IOfferDAL _offerDAL;
+        private readonly IPatientDAL _patientDAL;
 
-        public OfferController(IOfferDAL offerDAL, IPatientDAL patientDAL)
+        public OfferController(Context context, IOfferDAL offerDAL, IPatientDAL patientDAL)
         {
+            _context = context;
             _offerDAL = offerDAL;
             _patientDAL = patientDAL;
         }
 
 
-
         [HttpGet]
         public IActionResult AddOffer(int id)
         {
-            var patientfind=_patientDAL.GetById(id);
-            
+            var patientFind = _patientDAL.GetById(id);
 
-            offerDTO.Techniques=context.Techniques.ToList();
-            offerDTO.currencies=context.Currencies.ToList();
-            offerDTO.Patient = patientfind;
+            var offerDTO = new OfferDTO
+            {
+                Techniques = _context.Techniques.ToList(),
+                currencies = _context.Currencies.ToList(),
+                Patient = patientFind
+            };
 
             return View(offerDTO);
         }
@@ -49,7 +50,7 @@ namespace PresentationLayer.Controllers
         [HttpGet]
         public IActionResult Index() 
         {
-            var offer=context.Offers.Include(x=>x.Patient).Where(x=>x.IsActive==true).ToList();
+            var offer=_context.Offers.Include(x=>x.Patient).Where(x=>x.IsActive==true).ToList();
             var list = _offerDAL.GetAll(x => x.IsActive == true);
             return View(offer);
         }

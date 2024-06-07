@@ -12,35 +12,34 @@ namespace DataAccessLayer.EntityFramework
 {
     public class EfPersonalDAL : GenericRepository<Personal, Context>, IPersonalDAL
     {
+        private readonly Context _context;
+
+        public EfPersonalDAL(Context context) : base(context)
+        {
+            _context = context;
+        }
+
         public string PersonalInsert(Personal personal)
         {
-            using (var context = new Context())
+            try
             {
-                try
+                Personal p = _context.Personals.FirstOrDefault(c => c.Mail.ToLower() == personal.Mail.ToLower());
+
+                if (p == null)
                 {
-                    Personal p = context.Personals.FirstOrDefault(c => c.Mail.ToLower() == personal.Mail.ToLower());
-
-                    if (p == null)
-                    {
-                        personal.Mail.ToLower();
-                        context.Add(personal);
-                        context.SaveChanges();
-                        return "Başarılı.";
-
-                    }
-                    else
-                    {
-                        return "Zaten var.";
-                    }
-
+                    personal.Mail = personal.Mail.ToLower();
+                    _context.Add(personal);
+                    _context.SaveChanges();
+                    return "Başarılı.";
                 }
-                catch (Exception)
+                else
                 {
-
-                    return "Başarısız.";
+                    return "Zaten var.";
                 }
-
-
+            }
+            catch (Exception)
+            {
+                return "Başarısız.";
             }
         }
     }

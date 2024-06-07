@@ -8,12 +8,17 @@ namespace PresentationLayer.Controllers
 
     public class DefinitionsController : Controller
     {
-        Context context = new Context();
+        private readonly Context _context;
+
+        public DefinitionsController(Context context)
+        {
+            _context = context;
+        }
 
         [HttpGet]
         public IActionResult ChronicProblems()
         {
-            var list = context.ChronicProblems.Where(x => x.IsActive == true).ToList();
+            var list = _context.ChronicProblems.Where(x => x.IsActive == true).ToList();
             return View(list);
         }
 
@@ -33,8 +38,8 @@ namespace PresentationLayer.Controllers
                     };
 
                     // Veritabanı işlemi
-                    context.ChronicProblems.Add(chronicProblem);
-                    context.SaveChanges();
+                    _context.ChronicProblems.Add(chronicProblem);
+                    _context.SaveChanges();
                     TempData["Message"] = "add";
                     return Ok(new { success = true, message = "Ekleme işlemi başarılı!" });
                 }
@@ -45,7 +50,7 @@ namespace PresentationLayer.Controllers
             }
             if (chronicProblemsDTOs.Update == true)
             {
-                var chronicProblem = context.ChronicProblems.FirstOrDefault(cp => cp.ChronicProblemsID == chronicProblemsDTOs.ChronicProblemsID);
+                var chronicProblem = _context.ChronicProblems.FirstOrDefault(cp => cp.ChronicProblemsID == chronicProblemsDTOs.ChronicProblemsID);
 
                 try
                 {
@@ -54,7 +59,7 @@ namespace PresentationLayer.Controllers
                         return NotFound("Güncellenecek kayıt bulunamadı.");
                     }
                     chronicProblem.Title = chronicProblemsDTOs.Title;
-                    context.SaveChanges();
+                    _context.SaveChanges();
 
                     TempData["Message"] = "update";
                     return Ok(new { success = true, message = "Güncelleme işlemi başarılı!" });
@@ -67,12 +72,12 @@ namespace PresentationLayer.Controllers
             }
             else 
             {
-                var chronicProblemToDelete = context.ChronicProblems.FirstOrDefault(cp => cp.ChronicProblemsID == chronicProblemsDTOs.ChronicProblemsID);
+                var chronicProblemToDelete = _context.ChronicProblems.FirstOrDefault(cp => cp.ChronicProblemsID == chronicProblemsDTOs.ChronicProblemsID);
 
                 if (chronicProblemToDelete != null)
                 {
                     chronicProblemToDelete.IsActive = false; 
-                    context.SaveChanges();
+                    _context.SaveChanges();
                     TempData["Message"] = "delete";
                     return Ok(new { success = true, message = "Silme işlemi başarılı!" });
                 }
@@ -87,7 +92,7 @@ namespace PresentationLayer.Controllers
         [HttpGet]
         public IActionResult InfectiousDisease()
         {
-            var list = context.InfectiousDiseases.Where(x=>x.IsActive==true).ToList();
+            var list = _context.InfectiousDiseases.Where(x=>x.IsActive==true).ToList();
             return View(list);
         }
 
@@ -107,8 +112,8 @@ namespace PresentationLayer.Controllers
                     };
 
                     // Veritabanı işlemi
-                    context.InfectiousDiseases.Add(infectiousDisease);
-                    context.SaveChanges();
+                    _context.InfectiousDiseases.Add(infectiousDisease);
+                    _context.SaveChanges();
                     TempData["Message"] = "add";
                     return Ok(new { success = true, message = "Ekleme işlemi başarılı!" });
                 }
@@ -119,7 +124,7 @@ namespace PresentationLayer.Controllers
             }
             if (ınfectiousDiseasesDTOs.Update == true)
             {
-                var infectiousDisease = context.InfectiousDiseases.FirstOrDefault(cp => cp.InfectiousDiseaseID == ınfectiousDiseasesDTOs.InfectiousDiseaseID);
+                var infectiousDisease = _context.InfectiousDiseases.FirstOrDefault(cp => cp.InfectiousDiseaseID == ınfectiousDiseasesDTOs.InfectiousDiseaseID);
 
                 try
                 {
@@ -128,7 +133,7 @@ namespace PresentationLayer.Controllers
                         return NotFound("Güncellenecek kayıt bulunamadı.");
                     }
                     infectiousDisease.Title = ınfectiousDiseasesDTOs.Title;
-                    context.SaveChanges();
+                    _context.SaveChanges();
 
                     TempData["Message"] = "update";
                     return Ok(new { success = true, message = "Güncelleme işlemi başarılı!" });
@@ -142,12 +147,12 @@ namespace PresentationLayer.Controllers
             else
             {
                
-                var InfectiousDiseasesDelete = context.InfectiousDiseases.FirstOrDefault(x => x.InfectiousDiseaseID == ınfectiousDiseasesDTOs.InfectiousDiseaseID);
+                var InfectiousDiseasesDelete = _context.InfectiousDiseases.FirstOrDefault(x => x.InfectiousDiseaseID == ınfectiousDiseasesDTOs.InfectiousDiseaseID);
 
                 if (InfectiousDiseasesDelete != null)
                 {
                     InfectiousDiseasesDelete.IsActive = false;
-                    context.SaveChanges();
+                    _context.SaveChanges();
                     TempData["Message"] = "delete";
                     return Ok(new { success = true, message = "Silme işlemi başarılı!" });
                 }
@@ -160,7 +165,7 @@ namespace PresentationLayer.Controllers
         [HttpGet]
         public IActionResult ReminderDate()
         {
-            var list = context.ReminderDates.Where(x => x.IsActive == true).ToList();
+            var list = _context.ReminderDates.Where(x => x.IsActive == true).ToList();
             return View(list);
         }
 
@@ -177,8 +182,8 @@ namespace PresentationLayer.Controllers
                         RemindDayCountName= reminderDatesDTO.RemindDayCountName,
                     };
                     // Veritabanı işlemi
-                    context.ReminderDates.Add(reminderDate);
-                    context.SaveChanges();
+                    _context.ReminderDates.Add(reminderDate);
+                    _context.SaveChanges();
                     TempData["Message"] = "add";
                     return Ok(new { success = true, message = "Ekleme işlemi başarılı!" });
                 }
@@ -189,7 +194,7 @@ namespace PresentationLayer.Controllers
             }
             if (reminderDatesDTO.Update == true)
             {
-                var reminderDateupdate = context.ReminderDates.FirstOrDefault(cp => cp.ReminderDateID == reminderDatesDTO.ReminderDateID);
+                var reminderDateupdate = _context.ReminderDates.FirstOrDefault(cp => cp.ReminderDateID == reminderDatesDTO.ReminderDateID);
                 try
                 {
                     if (reminderDateupdate == null)
@@ -198,7 +203,7 @@ namespace PresentationLayer.Controllers
                     }
                     reminderDateupdate.RemindDayCount = reminderDatesDTO.RemindDayCount;
                     reminderDateupdate.RemindDayCountName = reminderDatesDTO.RemindDayCountName;
-                    context.SaveChanges();
+                    _context.SaveChanges();
 
                     TempData["Message"] = "update";
                     return Ok(new { success = true, message = "Güncelleme işlemi başarılı!" });
@@ -211,12 +216,12 @@ namespace PresentationLayer.Controllers
             }
             else
             {
-                var reminderdateDelete = context.ReminderDates.FirstOrDefault(x => x.ReminderDateID == reminderDatesDTO.ReminderDateID);
+                var reminderdateDelete = _context.ReminderDates.FirstOrDefault(x => x.ReminderDateID == reminderDatesDTO.ReminderDateID);
 
                 if (reminderdateDelete != null)
                 {
                     reminderdateDelete.IsActive = false;
-                    context.SaveChanges();
+                    _context.SaveChanges();
                     TempData["Message"] = "delete";
                     return Ok(new { success = true, message = "Silme işlemi başarılı!" });
                 }
@@ -229,7 +234,7 @@ namespace PresentationLayer.Controllers
         [HttpGet]
         public IActionResult Scope()
         {
-            var list = context.Scopes.Where(x => x.IsActive == true).ToList();
+            var list = _context.Scopes.Where(x => x.IsActive == true).ToList();
             return View(list);
         }
 
@@ -249,8 +254,8 @@ namespace PresentationLayer.Controllers
                     };
 
                     // Veritabanı işlemi
-                    context.Scopes.Add(scope);
-                    context.SaveChanges();
+                    _context.Scopes.Add(scope);
+                    _context.SaveChanges();
                     TempData["Message"] = "add";
                     return Ok(new { success = true, message = "Ekleme işlemi başarılı!" });
                 }
@@ -261,7 +266,7 @@ namespace PresentationLayer.Controllers
             }
             if (scopeDTOs.Update == true)
             {
-                var scope = context.Scopes.FirstOrDefault(cp => cp.ScopeID == scopeDTOs.ScopeID);
+                var scope = _context.Scopes.FirstOrDefault(cp => cp.ScopeID == scopeDTOs.ScopeID);
 
                 try
                 {
@@ -270,7 +275,7 @@ namespace PresentationLayer.Controllers
                         return NotFound("Güncellenecek kayıt bulunamadı.");
                     }
                     scope.Title = scopeDTOs.Title;
-                    context.SaveChanges();
+                    _context.SaveChanges();
 
                     TempData["Message"] = "update";
                     return Ok(new { success = true, message = "Güncelleme işlemi başarılı!" });
@@ -284,12 +289,12 @@ namespace PresentationLayer.Controllers
             else
             {
 
-                var scopeDelete = context.Scopes.FirstOrDefault(x => x.ScopeID == scopeDTOs.ScopeID);
+                var scopeDelete = _context.Scopes.FirstOrDefault(x => x.ScopeID == scopeDTOs.ScopeID);
 
                 if (scopeDelete != null)
                 {
                     scopeDelete.IsActive = false;
-                    context.SaveChanges();
+                    _context.SaveChanges();
                     TempData["Message"] = "delete";
                     return Ok(new { success = true, message = "Silme işlemi başarılı!" });
                 }
@@ -302,7 +307,7 @@ namespace PresentationLayer.Controllers
         [HttpGet]
         public IActionResult Technique()
         {
-            var list = context.Techniques.Where(x => x.IsActive == true).ToList();
+            var list = _context.Techniques.Where(x => x.IsActive == true).ToList();
             return View(list);
         }
 
@@ -321,8 +326,8 @@ namespace PresentationLayer.Controllers
                     };
 
                     // Veritabanı işlemi
-                    context.Techniques.Add(technique);
-                    context.SaveChanges();
+                    _context.Techniques.Add(technique);
+                    _context.SaveChanges();
                     TempData["Message"] = "add";
                     return Ok(new { success = true, message = "Ekleme işlemi başarılı!" });
                 }
@@ -333,7 +338,7 @@ namespace PresentationLayer.Controllers
             }
             if (techniqueDTOs.Update == true)
             {
-                var technique = context.Techniques.FirstOrDefault(cp => cp.TechniqueID == techniqueDTOs.TechniqueID);
+                var technique = _context.Techniques.FirstOrDefault(cp => cp.TechniqueID == techniqueDTOs.TechniqueID);
 
                 try
                 {
@@ -342,7 +347,7 @@ namespace PresentationLayer.Controllers
                         return NotFound("Güncellenecek kayıt bulunamadı.");
                     }
                     technique.Title = techniqueDTOs.Title;
-                    context.SaveChanges();
+                    _context.SaveChanges();
 
                     TempData["Message"] = "update";
                     return Ok(new { success = true, message = "Güncelleme işlemi başarılı!" });
@@ -356,12 +361,12 @@ namespace PresentationLayer.Controllers
             else
             {
 
-                var techniqueDelete = context.Techniques.FirstOrDefault(x => x.TechniqueID == techniqueDTOs.TechniqueID);
+                var techniqueDelete = _context.Techniques.FirstOrDefault(x => x.TechniqueID == techniqueDTOs.TechniqueID);
 
                 if (techniqueDelete != null)
                 {
                     techniqueDelete.IsActive = false;
-                    context.SaveChanges();
+                    _context.SaveChanges();
                     TempData["Message"] = "delete";
                     return Ok(new { success = true, message = "Silme işlemi başarılı!" });
                 }

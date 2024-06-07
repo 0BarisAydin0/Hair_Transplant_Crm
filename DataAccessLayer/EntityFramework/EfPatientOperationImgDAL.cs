@@ -12,5 +12,9 @@ namespace DataAccessLayer.EntityFramework
 {
     public class EfPatientOperationImgDAL : GenericRepository<PatientOperationImg, Context>, IPatientOperationImgDAL
     {
+
+        public EfPatientOperationImgDAL(Context context) : base(context)
+        {
+        }
     }
 }

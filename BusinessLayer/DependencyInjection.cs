@@ -16,6 +16,8 @@ namespace BusinessLayer
     {
         public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
+
+
             services.AddScoped<IPersonalService, PersonalManager>();
             services.AddScoped<IPersonalDAL, EfPersonalDAL>();
 

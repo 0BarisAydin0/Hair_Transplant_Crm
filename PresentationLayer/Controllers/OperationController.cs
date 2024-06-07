@@ -14,36 +14,34 @@ namespace PresentationLayer.Controllers
 {
     public class OperationController : Controller
     {
-        Context context = new Context();
-        OperationDTO operationDTO = new OperationDTO();
-        OperationDetailsViewModel DetailsViewModel = new OperationDetailsViewModel();
-
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IOperationDAL _operationDAL;
         private readonly IPatientOperationImgDAL _patientOperationImgDAL;
+        private readonly Context _context;
 
-
-        public OperationController(IWebHostEnvironment webHostEnvironment, IOperationDAL operationDAL, IPatientOperationImgDAL patientOperationImgDAL)
+        public OperationController(IWebHostEnvironment webHostEnvironment, IOperationDAL operationDAL, IPatientOperationImgDAL patientOperationImgDAL, Context context)
         {
             _webHostEnvironment = webHostEnvironment;
             _operationDAL = operationDAL;
             _patientOperationImgDAL = patientOperationImgDAL;
+            _context = context;
         }
 
 
         [HttpGet]
         public IActionResult OperationAdd(int id)
         {
-            var patientfind = context.Patients.Where(x => x.PatientID == id).FirstOrDefault();
+            var patientFind = _context.Patients.FirstOrDefault(x => x.PatientID == id);
 
-
-            operationDTO.Techniques = context.Techniques.ToList();
-            operationDTO.currencies = context.Currencies.ToList();
-            operationDTO.Personals = context.Personals.ToList();
-            operationDTO.Patient = patientfind;
+            var operationDTO = new OperationDTO
+            {
+                Techniques = _context.Techniques.ToList(),
+                Currencies = _context.Currencies.ToList(),
+                Personals = _context.Personals.ToList(),
+                Patient = patientFind
+            };
 
             return View(operationDTO);
-
         }
 
         [HttpPost]
@@ -137,8 +135,8 @@ namespace PresentationLayer.Controllers
 
         public IActionResult OperationDetails(int id)
         {
-            var gruplar = context.patientOperationImgs
-                .Join(context.ReminderDates,
+            var gruplar = _context.patientOperationImgs
+                .Join(_context.ReminderDates,
                     img => img.ReminderDateID,
                     reminder => reminder.ReminderDateID,
                     (img, reminder) => new { img, reminder })
@@ -149,21 +147,21 @@ namespace PresentationLayer.Controllers
                     ReminderDateID = group.Key,
                     ReminderDateName = group.FirstOrDefault().reminder != null ? group.FirstOrDefault().reminder.RemindDayCountName : null,
                     PatientOperationImgs = group.Select(x => x.img).ToList(),
-
                 })
                 .ToList();
 
+            var detailsViewModel = new OperationDetailsViewModel
+            {
+                OperationIDVM = id,
+                Patient = _context.Operations.Include(i => i.Patient)
+                                             .FirstOrDefault(i => i.OperationID == id)?.Patient,
+                reminderDatelist = _context.ReminderDates.ToList()
+            };
 
-            DetailsViewModel.OperationIDVM = id;
-            DetailsViewModel.Patient = context.Operations.Include(i => i.Patient)
-                                                         .FirstOrDefault(i => i.OperationID == id).Patient;
-            DetailsViewModel.reminderDatelist = context.ReminderDates.ToList();
             ViewBag.operationid = id;
 
-
-            return View(Tuple.Create(gruplar, DetailsViewModel));
+            return View(Tuple.Create(gruplar, detailsViewModel));
         }
-
 
 
 
@@ -217,26 +215,27 @@ namespace PresentationLayer.Controllers
         [HttpGet]
         public IActionResult PatientOperationImageAdd(int id)
         {
-            //var operationselect=context.Operations.Where(x=>x.OperationID== id);
+            var detailsViewModel = new OperationDetailsViewModel
+            {
+                Operation = _context.Operations
+                                    .Include(x => x.Patient)
+                                    .FirstOrDefault(x => x.OperationID == id),
+                reminderDatelist = _context.ReminderDates.ToList()
+            };
 
-            DetailsViewModel.Operation = context.Operations.Include(x => x.Patient).Where(x => x.OperationID == id).FirstOrDefault();
-            DetailsViewModel.reminderDatelist = context.ReminderDates.ToList();
-         
-
-
-            return View(DetailsViewModel);
+            return View(detailsViewModel);
         }
 
 
 
-    
+
 
         [HttpPost]
         public IActionResult PatientOperationImageAdd(PatientOperationImg patientOperationImg, List<IFormFile> formFiles)
         {
             var operationid = patientOperationImg.OperationID;
             var reminderDateid = patientOperationImg.ReminderDateID;
-            var existingFiles = context.patientOperationImgs.Where(p => p.OperationID == operationid && p.ReminderDateID == reminderDateid).ToList();
+            var existingFiles = _context.patientOperationImgs.Where(p => p.OperationID == operationid && p.ReminderDateID == reminderDateid).ToList();
             int totalfiles = existingFiles.Count + formFiles.Count;
             if (formFiles.Count > 5 || totalfiles > 5)
             {
@@ -269,8 +268,8 @@ namespace PresentationLayer.Controllers
 
                     // Dosya yolu oluştur
                     var webPath = Path.Combine("/folder", randomName);
-                    
-                   
+
+
                     // PatientOperationImg nesnesine dosya yolunu ekleyin
                     // ve her bir dosya için ayrı bir PatientOperationImg nesnesi oluşturun
                     var patientOperationImgClone = new PatientOperationImg
@@ -281,7 +280,7 @@ namespace PresentationLayer.Controllers
                     };
 
                     _patientOperationImgDAL.Create(patientOperationImgClone);
-                    
+
 
                     // Burada patientOperationImgClone nesnesini veritabanına kaydedebilirsiniz
                     // Örneğin: _dbContext.PatientOperationImgs.Add(patientOperationImgClone);
@@ -297,7 +296,7 @@ namespace PresentationLayer.Controllers
                 }
             }
 
-            return RedirectToAction("OperationDetails",new {id= operationid});
+            return RedirectToAction("OperationDetails", new { id = operationid });
         }
 
     }

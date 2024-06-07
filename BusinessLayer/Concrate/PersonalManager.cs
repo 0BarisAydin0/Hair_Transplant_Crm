@@ -17,7 +17,7 @@ namespace BusinessLayer.Concrate
     public class PersonalManager : IPersonalService
     {
 
-        Context context = new Context();
+        private readonly Context _context;
         private IPersonalDAL _personalDAL;
 
         public PersonalManager(IPersonalDAL personalDAL)
@@ -29,23 +29,21 @@ namespace BusinessLayer.Concrate
 
         public async Task<List<Personal>> AsyncGetAll()
         {
-            return await context.Personals.ToListAsync();
+            return await _context.Personals.ToListAsync();
         }
 
         public string CheckCreate(Personal personal)
         {
 
-            using (var context = new Context())
-            {
                 try
                 {
-                    Personal p = context.Personals.FirstOrDefault(c => c.Mail.ToLower() == personal.Mail.ToLower());
+                    Personal p = _context.Personals.FirstOrDefault(c => c.Mail.ToLower() == personal.Mail.ToLower());
 
                     if (p == null)
                     {
                         personal.Mail.ToLower();
-                        context.Add(personal);
-                        context.SaveChanges();
+                        _context.Add(personal);
+                        _context.SaveChanges();
                         return "success";
 
                     }
@@ -61,8 +59,6 @@ namespace BusinessLayer.Concrate
                     return "error";
                 }
 
-
-            }
         }
 
         public void Create(Personal entity)
@@ -109,7 +105,7 @@ namespace BusinessLayer.Concrate
         public async Task<List<Scope>> ScopeSelect()
         {
 
-            List<Scope> scopes = await context.Scopes.ToListAsync();
+            List<Scope> scopes = await _context.Scopes.ToListAsync();
             return scopes;
         }
 

@@ -15,17 +15,15 @@ namespace PresentationLayer.Controllers
 {
     public class PatientController : Controller
     {
+        
+    private readonly Context _context;
+    private readonly IPatientService _patientService;
 
-        Context context = new Context();
-        PatientDTO patientDTO = new PatientDTO();
-        private IPatientService _patientService;
-
-        public PatientController(IPatientService patientService)
-        {
-
-            _patientService = patientService;
-        }
-
+    public PatientController(Context context, IPatientService patientService)
+    {
+        _context = context;
+        _patientService = patientService;
+    }
 
         async void PatientViewSelectModel()
         {
@@ -70,10 +68,14 @@ namespace PresentationLayer.Controllers
         [HttpGet]
         public IActionResult PatientAdd()
         {
-            patientDTO.chronicProblemslist = context.ChronicProblems.ToList();
-            patientDTO.ınfectiousDiseases = context.InfectiousDiseases.ToList();
-            patientDTO.patients = context.Patients.ToList();
-            patientDTO.countries = context.Countries.ToList();
+            var patientDTO = new PatientDTO
+            {
+                chronicProblemslist = _context.ChronicProblems.ToList(),
+                ınfectiousDiseases = _context.InfectiousDiseases.ToList(),
+                patients = _context.Patients.ToList(),
+                countries = _context.Countries.ToList()
+            };
+
             return View(patientDTO);
         }
 
@@ -128,26 +130,22 @@ namespace PresentationLayer.Controllers
 
         public IActionResult PatientDetails(int id)
         {
+            var operation = _context.Operations
+                .Include(o => o.Patient)
+                .Include(o => o.Personal)
+                .FirstOrDefault(o => o.Patient.PatientID == id);
 
+            var operationList = _context.Operations.Where(x => x.PatientID == id).ToList();
+            ViewBag.OperationCount = operationList.Count();
 
+            var offerList = _context.Offers.Where(x => x.PatientID == id).ToList();
+            ViewBag.OfferCount = offerList.Count();
 
-            var operation = context.Operations
-                       .Include(patient => patient.Patient)
-                       .Include(patient => patient.Personal) 
-                        .Where(patient => patient.Patient.PatientID == id)
-                        .FirstOrDefault();
-
-            var operationlist = context.Operations.Where(x => x.PatientID == id).ToList();
-            ViewBag.OperationCount = operationlist.Count();
-
-            var offerlist = context.Offers.Where(x => x.PatientID == id).ToList();
-            ViewBag.OfferCount = offerlist.Count();
-
-
-
-            patientDTO.operation = operation;
-            patientDTO.patient = _patientService.GetById(id);
-
+            var patientDTO = new PatientDTO
+            {
+                operation = operation,
+                patient = _patientService.GetById(id)
+            };
 
             return View(patientDTO);
         }
@@ -155,33 +153,29 @@ namespace PresentationLayer.Controllers
         [HttpGet]
         public IActionResult PatientUpdate(int id)
         {
-            string chronicProblems = context.Patients
+            string chronicProblems = _context.Patients
                 .Where(x => x.PatientID == id)
                 .Select(x => x.ChronicProblem)
                 .FirstOrDefault();
-            string[] chronicProblemlist = chronicProblems.Split(',').Select(p => p.Trim()).ToArray();
+            string[] chronicProblemlist = chronicProblems?.Split(',').Select(p => p.Trim()).ToArray() ?? new string[0];
 
-            // List<string> chronicProblemlistVM = new List<string>(chronicProblemlist);  eğer sadeceliste halinde dönmek istersek bunu kullanabiliriz.
-            patientDTO.chronicProblemlistVM = chronicProblemlist.ToList();
-
-
-            string InfectiousDisease = context.Patients
+            string infectiousDisease = _context.Patients
                 .Where(x => x.PatientID == id)
                 .Select(x => x.InfectiousDisease)
                 .FirstOrDefault();
-            string[] InfectiousDiseaselist = InfectiousDisease.Split(',').Select(p => p.Trim()).ToArray();
-            patientDTO.ınfectiousDiseasesVM = InfectiousDiseaselist.ToList();
+            string[] infectiousDiseaselist = infectiousDisease?.Split(',').Select(p => p.Trim()).ToArray() ?? new string[0];
 
-
-            patientDTO.patient = context.Patients.Where(x => x.PatientID == id).FirstOrDefault();
-
-            patientDTO.countries = context.Countries.ToList();
-
-            patientDTO.chronicProblemslist = context.ChronicProblems.ToList();
-            patientDTO.ınfectiousDiseases = context.InfectiousDiseases.ToList();
+            var patientDTO = new PatientDTO
+            {
+                chronicProblemlistVM = chronicProblemlist.ToList(),
+                ınfectiousDiseasesVM = infectiousDiseaselist.ToList(),
+                patient = _context.Patients.FirstOrDefault(x => x.PatientID == id),
+                countries = _context.Countries.ToList(),
+                chronicProblemslist = _context.ChronicProblems.ToList(),
+                ınfectiousDiseases = _context.InfectiousDiseases.ToList()
+            };
 
             return View(patientDTO);
-
         }
 
 

@@ -18,12 +18,15 @@ namespace PresentationLayer.Controllers
         private IPersonalService _personalservice;
         PersonalDTO personalDTO = new PersonalDTO();
 
-        Context context = new Context();
-        public PersonalController(IPersonalService personalservice)
+        private readonly Context _context;
+        public PersonalController(IPersonalService personalservice, Context context)
         {
             _personalservice = personalservice;
+            _context = context;
 
         }
+
+      
 
         async void ScopeList()
         {
@@ -154,7 +157,7 @@ namespace PresentationLayer.Controllers
 
            
 
-            var operation = context.Operations
+            var operation = _context.Operations
     .Include(patient => patient.Patient)
     .Include(patient => patient.Personal) // Operations yerine Operation olmalı, doğru ilişki adını kullanmalısınız
     .Where(patient => patient.Personal.PersonalID == id)

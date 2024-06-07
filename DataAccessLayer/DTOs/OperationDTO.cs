@@ -11,7 +11,7 @@ namespace DataAccessLayer.DTOs
     public class OperationDTO
     {
         public List<Personal> Personals { get; set; }
-        public List<Currency> currencies { get; set; }
+        public List<Currency> Currencies { get; set; }
         public List<Technique> Techniques { get; set; }
         public List<Patient> patients { get; set; }
         public List<PatientOperationImg> patientOperationImgs { get; set; }
