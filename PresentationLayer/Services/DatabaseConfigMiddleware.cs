@@ -21,44 +21,44 @@ namespace PresentationLayer.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task Invoke(HttpContext context, Context dbContext)
-        {
-            if (context.User.Identity.IsAuthenticated)
-            {
-                var userEmail = context.User.Identity.Name;
-                var databaseConfig = dbContext.databaseConfigs.FirstOrDefault(c => c.Email == userEmail);
+        //public async Task Invoke(HttpContext context, Context dbContext)
+        //{
+        //    if (context.User.Identity.IsAuthenticated)
+        //    {
+        //        var userEmail = context.User.Identity.Name;
+        //        var databaseConfig = dbContext.databaseConfigs.FirstOrDefault(c => c.Email == userEmail);
 
-                if (databaseConfig != null)
-                {
-                    var connectionString = databaseConfig.ConnectionString;
-                    // Bağlantı dizesini güncelle
-                    context.Items["ConnectionString"] = connectionString;
-                    connectionString = context.Items["ConnectionString"] as string;
+        //        if (databaseConfig != null)
+        //        {
+        //            var connectionString = databaseConfig.ConnectionString;
+        //            // Bağlantı dizesini güncelle
+        //            context.Items["ConnectionString"] = connectionString;
+        //            connectionString = context.Items["ConnectionString"] as string;
 
-                    // ConnectionString değerini consola yazdır
-                    Console.WriteLine("ConnectionString: " + connectionString);
-                }
-                else
-                {
-                    // Kullanıcıya uygun bir hata mesajı gösterilebilir veya varsayılan bir bağlantı dizesi kullanılabilir
-                }
-            }
-            else // Kimlik doğrulanmamışsa
-            {
-                // Varsayılan bağlantı dizesini appsettings.json'dan al
-                var defaultConnectionString = dbContext.Database.GetConnectionString();
-                // Bağlantı dizesini güncelle
-                context.Items["ConnectionString"] = defaultConnectionString;
+        //            // ConnectionString değerini consola yazdır
+        //            Console.WriteLine("ConnectionString: " + connectionString);
+        //        }
+        //        else
+        //        {
+        //            // Kullanıcıya uygun bir hata mesajı gösterilebilir veya varsayılan bir bağlantı dizesi kullanılabilir
+        //        }
+        //    }
+        //    else // Kimlik doğrulanmamışsa
+        //    {
+        //        // Varsayılan bağlantı dizesini appsettings.json'dan al
+        //        var defaultConnectionString = dbContext.Database.GetConnectionString();
+        //        // Bağlantı dizesini güncelle
+        //        context.Items["ConnectionString"] = defaultConnectionString;
 
-                var connectionString = context.Items["ConnectionString"] as string;
+        //        var connectionString = context.Items["ConnectionString"] as string;
 
-                // ConnectionString değerini consola yazdır
-                Console.WriteLine("ConnectionString: " + connectionString);
+        //        // ConnectionString değerini consola yazdır
+        //        Console.WriteLine("ConnectionString: " + connectionString);
 
-            }
+        //    }
 
-            await _next(context);
-        }
+        //    await _next(context);
+        //}
 
 
 

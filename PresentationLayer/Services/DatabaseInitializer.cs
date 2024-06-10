@@ -14,7 +14,7 @@ namespace PresentationLayer.Services
             _serviceProvider = serviceProvider;
         }
 
-        public async Task InitializeDatabaseAsync()
+        public async Task InitializeDatabaseAsync(string email)
         {
             using (var scope = _serviceProvider.CreateScope())
             {

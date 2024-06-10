@@ -12,6 +12,7 @@ using System.IO;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace DataAccessLayer.Concrate
 {
@@ -49,7 +50,7 @@ namespace DataAccessLayer.Concrate
                 {
                     connection.Open();
 
-                    var commandText = "SELECT ConnectionString FROM databaseConfigs WHERE Email = @Email";
+                    var commandText = "SELECT ConnectionString FROM UserDatabaseConfigs WHERE Email = @Email";
                     var command = new SqlCommand(commandText, connection);
                     command.Parameters.AddWithValue("@Email", userEmail);
                     var result = command.ExecuteScalar();
@@ -65,11 +66,28 @@ namespace DataAccessLayer.Concrate
 
             return connectionString;
         }
+        public string GetEmailFromCookie()
+        {
+            if (_httpContextAccessor.HttpContext != null)
+            {
+                // HttpContext nesnesini kullanarak çerezden e-posta adresini okuyun
+                string encodedEmail = _httpContextAccessor.HttpContext.Request.Cookies["Email"];
+                //string decodedEmail = Uri.UnescapeDataString(encodedEmail);
+                return encodedEmail; // Decoded email'i döndürün
+            }
+            return null;
+        }
         private string GetUserEmail()
         {
+            string email = GetEmailFromCookie();
             var httpContext = new HttpContextAccessor().HttpContext;
             var userEmail = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             //var userEmail = httpContext?.User?.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+            if (userEmail == null) 
+            {
+                userEmail = email;
+            }
+
             return userEmail;
         }
         public DbSet<Settings> Settings { get; set; }
@@ -85,6 +103,6 @@ namespace DataAccessLayer.Concrate
         public DbSet<Scope> Scopes { get; set; }
         public DbSet<Technique> Techniques { get; set; }
         public DbSet<PatientOperationImg> patientOperationImgs { get; set; }
-        public DbSet<DatabaseConfig> databaseConfigs { get; set; }
+        public DbSet<DatabaseConfig> databaseConfigs { get; set; }       
     }
 }

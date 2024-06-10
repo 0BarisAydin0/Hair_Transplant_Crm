@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.ValidationRules;
+using DataAccessLayer.Concrate;
 using DataAccessLayer.DTOs;
 using DataAccessLayer.Services;
 using EntityLayer;
@@ -7,6 +8,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using PresentationLayer.Services;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace PresentationLayer.Controllers
 {
@@ -16,12 +22,18 @@ namespace PresentationLayer.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IEmailSender _emailSender;
-        public LoginController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IEmailSender emailSender)
+        private readonly IServiceProvider _serviceProvider;
+        private readonly Context _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public LoginController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IEmailSender emailSender, IServiceProvider serviceProvider, Context context, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
-
+            _serviceProvider = serviceProvider;
+            _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -66,8 +78,10 @@ namespace PresentationLayer.Controllers
 
         public async Task<IActionResult> Login(LoginViewModel model)
         {
+
             if (ModelState.IsValid)
             {
+                
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user != null)
                 {
@@ -89,6 +103,27 @@ namespace PresentationLayer.Controllers
             return View(model);
         }
 
+
+        public static class HashingHelper
+        {
+            public static string Hash(string input)
+            {
+                using (SHA256 sha256Hash = SHA256.Create())
+                {
+                    // Girdiyi hashleyin
+                    byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+                    // Hash'i bir string olarak formatlayın
+                    StringBuilder builder = new StringBuilder();
+                    for (int i = 0; i < bytes.Length; i++)
+                    {
+                        builder.Append(bytes[i].ToString("x2"));
+                    }
+                    return builder.ToString();
+                }
+            }
+        }
+
         [HttpGet]
         public IActionResult Register()
         {
@@ -104,6 +139,10 @@ namespace PresentationLayer.Controllers
         {
             if (ModelState.IsValid)
             {
+                var email = model.Email;
+                var databaseInitializer = new DatabaseInitializer(_serviceProvider);
+                await databaseInitializer.InitializeDatabaseAsync(email);
+
                 Random random = new Random();
                 int code;
                 code = random.Next(100000, 1000000);
