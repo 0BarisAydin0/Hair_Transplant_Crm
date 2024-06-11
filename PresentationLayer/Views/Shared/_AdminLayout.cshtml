@@ -17,7 +17,6 @@
     <meta name="description" content="" />
 
 
-    @* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10"/> *@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
 
     <!-- Favicon -->
@@ -26,30 +25,35 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&ampdisplay=swap"
-          rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&ampdisplay=swap" rel="stylesheet" />
 
     <link rel="stylesheet" href="/theme/assets/vendor/fonts/tabler-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    <!-- <link rel="stylesheet" href="/theme/assets/vendor/fonts/fontawesome.css" /> -->
-    <!-- <link rel="stylesheet" href="/theme/assets/vendor/fonts/flag-icons.css" /> -->
     <!-- Core CSS -->
     <link rel="stylesheet" href="/theme/assets/vendor/css/rtl/core.css" />
     <link rel="stylesheet" href="/theme/assets/vendor/css/rtl/theme-default.css" />
-    <link rel="stylesheet" href="/theme/assets/css/demo.css"
+    <link rel="stylesheet" href="/theme/assets/css/demo.css" />
 
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="/theme/assets/vendor/libs/node-waves/node-waves.css" />
     <link rel="stylesheet" href="/theme/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
     <!-- Page CSS -->
-    <!-- Helpers -->
+    <link href="~/css/site.css" rel="stylesheet" />
+    <script src="~/js/site.js"></script>
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+
+
     <script src="/theme/assets/vendor/js/helpers.js"></script>
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="/theme/assets/js/config.js"></script>
 
-   
+    <style>
+        ul.dtr-details {
+            width: 100%;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -90,22 +94,22 @@
 
                             <div>Hastalar</div>
                         </a>
-                    </li>   
+                    </li>
                     <li class="menu-item">
                         <a href="/Offer/Index" class="menu-link">
                             <div>Teklifler</div>
                         </a>
                     </li>
                     <li class="menu-item" style="">
-                        <a  class="menu-link menu-toggle">                          
-                            <div >Tanımlar</div>
+                        <a class="menu-link menu-toggle">
+                            <div>Tanımlar</div>
                         </a>
                         <ul class="menu-sub">
                             <li class="menu-item">
                                 <a href="/Definitions/ChronicProblems" class="menu-link">
                                     <div>Kronik Hastalıklar</div>
                                 </a>
-                            </li>                            
+                            </li>
                         </ul>
                         <ul class="menu-sub">
                             <li class="menu-item">
@@ -178,28 +182,7 @@
                                             </div>
                                         </a>
                                     </li>
-                                    
-                                    @* <li>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="ti ti-user-check me-2 ti-sm"></i>
-                                            <span class="align-middle">My Profile</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="ti ti-settings me-2 ti-sm"></i>
-                                            <span class="align-middle">Settings</span>
-                                        </a>
-                                    </li> 
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <span class="d-flex align-items-center align-middle">
-                                                <i class="flex-shrink-0 ti ti-credit-card me-2 ti-sm"></i>
-                                                <span class="flex-grow-1 align-middle">Billing</span>
-                                                <span class="flex-shrink-0 badge badge-center rounded-pill bg-label-danger w-px-20 h-px-20">2</span>
-                                            </span>
-                                        </a>
-                                    </li>*@
+
                                     <li>
                                         <div class="dropdown-divider"></div>
                                     </li>
@@ -220,14 +203,9 @@
                 <!-- Content wrapper -->
                 <div class="content-wrapper">
                     <!-- Content -->
-
-
-
-
                     <div class="container-xxl flex-grow-1 container-p-y">
                         @RenderBody()
                     </div>
-
                     <!-- / Content -->
                     <!-- Footer -->
                     <footer class="content-footer footer bg-footer-theme">
@@ -269,7 +247,7 @@
     <script src="/theme/assets/vendor/libs/node-waves/node-waves.js"></script>
     <script src="/theme/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
     <script src="/theme/assets/vendor/libs/hammer/hammer.js"></script>
-
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
     <script src="/theme/assets/vendor/js/menu.js"></script>
 
     <!-- endbuild -->
@@ -278,20 +256,70 @@
     <script src="/theme/assets/js/main.js"></script>
 
     <!-- Page JS -->
+    <script src="/theme/assets/vendor/js/helpers.js"></script>
+    <script src="/theme/assets/js/config.js"></script>
+    <!--Datatables-->
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
+
+    <!-- DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+
+    <!-- SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
 
 
 
 
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'excel', 'pdf', 'print'
+            ],
+            responsive: true,
+            scrollX: true,
+            language: {
+                info: "_TOTAL_ kayıttan _START_ - _END_ kayıt gösteriliyor.",
+                infoEmpty: "Gösterilecek hiç kayıt yok.",
+                loadingRecords: "Kayıtlar yükleniyor.",
+                zeroRecords: "Herhangi bir sonuç bulunamadı",
+                search: "Arama:",
+                infoFiltered: "(toplam _MAX_ kayıttan filtrelenenler)",
+                paginate: {
+                    first: "İlk",
+                    previous: "Önceki",
+                    next: "Sonraki",
+                    last: "Son"
+                },
+                buttons: {
+                    copyTitle: "Panoya kopyalandı.",
+                    copySuccess: {
+                        _: "Panoya %d satır kopyalandı",
+                        1: "Panoya 1 satır kopyalandı"
+                    }
+                }
+            }
+        });
+    });
+</script>
+
 @* Sweet Alet Alanı başlangıç*@
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<link href="~/css/site.css" rel="stylesheet" />
-
 
 @if (TempData["Message"] != null)
 {
@@ -335,18 +363,10 @@
                 title: title,
         @*                 text: '@TempData["Message"]', *@
                 icon: icon
-                                    });
-                                };
+                                                            });
+                                                        };
     </script>
 }
-
-
-<!-- SweetAlert CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
-
-<!-- SweetAlert JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
-
 
 @if (TempData["ValidationErrors"] != null)
 {
@@ -377,55 +397,3 @@
 @* Sweet Alet Alanı bitiş*@
 
 
-<!--Datatables-->
-
-
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
-
-<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-
-<script>
-
-    $('#example').DataTable({
-        language: {
-            info: "_TOTAL_ kayıttan _START_ - _END_ kayıt gösteriliyor.",
-            infoEmpty: "Gösterilecek hiç kayıt yok.",
-            loadingRecords: "Kayıtlar yükleniyor.",
-            zeroRecords: "Herhangi bir sonuç bulunamadı",
-            search: "Arama:",
-            infoFiltered: "(toplam _MAX_ kayıttan filtrelenenler)",
-            buttons: {
-                copyTitle: "Panoya kopyalandı.",
-                copySuccess: "Panoya %d satır kopyalandı",
-                copy: "Kopyala",
-                // print: "Yazdır",
-            },
-
-            paginate: {
-                first: "İlk",
-                previous: "Önceki",
-                next: "Sonraki",
-                last: "Son"
-            },
-        },
-        dom: 'Bfrtip',
-        buttons: [
-            'copy', 'excel', 'pdf'/* , 'print' */
-        ],
-
-        responsive: true
-
-    });
-
-</script>
-<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<!--Datatables-->
