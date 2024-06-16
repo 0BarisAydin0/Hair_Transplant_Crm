@@ -27,5 +27,11 @@ namespace DataAccessLayer.DTOs
         public string? CompanyName { get; set; }
         public string? Name { get; set; }
         public string? Surname { get; set; }
+
+        public int Id { get; set; }
+        public string DbName { get; set; }
+        public string ConnectionString { get; set; }
+        public int CustomerNumber { get; set; }
+        public string? Note { get; set; }
     }
 }

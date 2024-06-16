@@ -13,14 +13,36 @@ using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Org.BouncyCastle.Asn1.Ocsp;
+using Microsoft.Extensions.Options;
 
 namespace DataAccessLayer.Concrate
 {
-     public class Context : IdentityDbContext<AppUser, AppRole, int>
+    public class Context : IdentityDbContext<AppUser, AppRole, int>
     {
+
+
+
+        //#region DeveloperMigration
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
+        //    var configuration = builder.Build();
+
+        //    optionsBuilder.UseSqlServer(configuration["ConnectionStrings:DefaultConnection"]);
+        //}
+        //#endregion
+
+        #region LiveMigration
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public Context(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        //public Context(IConfiguration configuration, IHttpContextAccessor httpContextAccessor) : base(options)
+        //{
+        //    _configuration = configuration;
+        //    _httpContextAccessor = httpContextAccessor;
+        //}
+
+        public Context(DbContextOptions<Context> options, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+     : base(options)
         {
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
@@ -28,12 +50,14 @@ namespace DataAccessLayer.Concrate
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
+            if (_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
             {
                 var connectionString = GetConnectionStringFromDatabase();
                 optionsBuilder.UseSqlServer(connectionString);
             }
         }
+
+
 
         private string GetConnectionStringFromDatabase()
         {
@@ -50,7 +74,7 @@ namespace DataAccessLayer.Concrate
                 {
                     connection.Open();
 
-                    var commandText = "SELECT ConnectionString FROM UserDatabaseConfigs WHERE Email = @Email";
+                    var commandText = "SELECT ConnectionString FROM CustomerDatabaseConfigs WHERE Email = @Email";
                     var command = new SqlCommand(commandText, connection);
                     command.Parameters.AddWithValue("@Email", userEmail);
                     var result = command.ExecuteScalar();
@@ -79,17 +103,30 @@ namespace DataAccessLayer.Concrate
         }
         private string GetUserEmail()
         {
+            // Çerezden e-posta adresini al
             string email = GetEmailFromCookie();
-            var httpContext = new HttpContextAccessor().HttpContext;
-            var userEmail = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            //var userEmail = httpContext?.User?.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-            if (userEmail == null) 
+
+            // HttpContext nesnesini kontrol et
+            var httpContext = _httpContextAccessor?.HttpContext;
+
+            if (httpContext == null)
             {
-                userEmail = email;
+                return email ?? "admin@admin.com"; // Eğer HttpContext null ise çerezden alınan email'i veya varsayılan email'i döndür
+            }
+
+            // Kullanıcı e-postasını Claims'den al
+            var userEmail = httpContext.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            // Kullanıcı e-postası null ise çerezden alınan email'i veya varsayılan email'i kullan
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                userEmail = email ?? "admin@admin.com";
             }
 
             return userEmail;
         }
+        #endregion
+
         public DbSet<Settings> Settings { get; set; }
         public DbSet<Personal> Personals { get; set; }
         public DbSet<Patient> Patients { get; set; }
@@ -103,6 +140,8 @@ namespace DataAccessLayer.Concrate
         public DbSet<Scope> Scopes { get; set; }
         public DbSet<Technique> Techniques { get; set; }
         public DbSet<PatientOperationImg> patientOperationImgs { get; set; }
-        public DbSet<DatabaseConfig> databaseConfigs { get; set; }       
+        public DbSet<CustomerDatabaseConfigs> CustomerDatabaseConfigs { get; set; }
+
+
     }
 }

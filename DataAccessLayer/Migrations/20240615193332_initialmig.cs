@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DataAccessLayer.Migrations
 {
-    public partial class mig1 : Migration
+    public partial class initialmig : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -32,6 +32,10 @@ namespace DataAccessLayer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Surname = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConfirmCode = table.Column<int>(type: "int", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -58,7 +62,9 @@ namespace DataAccessLayer.Migrations
                 {
                     ChronicProblemsID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -72,7 +78,9 @@ namespace DataAccessLayer.Migrations
                     CountryID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CountryCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CountryName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CountryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -86,11 +94,33 @@ namespace DataAccessLayer.Migrations
                     CurrencyID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CurrencyCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Currencies", x => x.CurrencyID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CustomerDatabaseConfigs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DbName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConnectionString = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CustomerNumber = table.Column<int>(type: "int", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CustomerDatabaseConfigs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -99,7 +129,9 @@ namespace DataAccessLayer.Migrations
                 {
                     InfectiousDiseaseID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -164,16 +196,10 @@ namespace DataAccessLayer.Migrations
                 {
                     ReminderDateID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstRemind = table.Column<int>(type: "int", nullable: true),
-                    SecondRemind = table.Column<int>(type: "int", nullable: true),
-                    ThirdRemind = table.Column<int>(type: "int", nullable: true),
-                    FourthRemind = table.Column<int>(type: "int", nullable: true),
-                    FifthRemind = table.Column<int>(type: "int", nullable: true),
-                    SixthRemind = table.Column<int>(type: "int", nullable: true),
-                    SeventhRemind = table.Column<int>(type: "int", nullable: true),
-                    EighthRemind = table.Column<int>(type: "int", nullable: true),
-                    NinthRemind = table.Column<int>(type: "int", nullable: true),
-                    TenthRemind = table.Column<int>(type: "int", nullable: true)
+                    RemindDayCount = table.Column<int>(type: "int", nullable: true),
+                    RemindDayCountName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -186,7 +212,9 @@ namespace DataAccessLayer.Migrations
                 {
                     ScopeID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -218,7 +246,9 @@ namespace DataAccessLayer.Migrations
                 {
                     TechniqueID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -390,6 +420,35 @@ namespace DataAccessLayer.Migrations
                         principalColumn: "PersonalID");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "patientOperationImgs",
+                columns: table => new
+                {
+                    PatientImgID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    POImg = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Dateofrecord = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    ReminderDateID = table.Column<int>(type: "int", nullable: false),
+                    OperationID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_patientOperationImgs", x => x.PatientImgID);
+                    table.ForeignKey(
+                        name: "FK_patientOperationImgs_Operations_OperationID",
+                        column: x => x.OperationID,
+                        principalTable: "Operations",
+                        principalColumn: "OperationID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_patientOperationImgs_ReminderDates_ReminderDateID",
+                        column: x => x.ReminderDateID,
+                        principalTable: "ReminderDates",
+                        principalColumn: "ReminderDateID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -443,6 +502,16 @@ namespace DataAccessLayer.Migrations
                 name: "IX_Operations_PersonalID",
                 table: "Operations",
                 column: "PersonalID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_patientOperationImgs_OperationID",
+                table: "patientOperationImgs",
+                column: "OperationID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_patientOperationImgs_ReminderDateID",
+                table: "patientOperationImgs",
+                column: "ReminderDateID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -472,16 +541,16 @@ namespace DataAccessLayer.Migrations
                 name: "Currencies");
 
             migrationBuilder.DropTable(
+                name: "CustomerDatabaseConfigs");
+
+            migrationBuilder.DropTable(
                 name: "InfectiousDiseases");
 
             migrationBuilder.DropTable(
                 name: "Offers");
 
             migrationBuilder.DropTable(
-                name: "Operations");
-
-            migrationBuilder.DropTable(
-                name: "ReminderDates");
+                name: "patientOperationImgs");
 
             migrationBuilder.DropTable(
                 name: "Scopes");
@@ -497,6 +566,12 @@ namespace DataAccessLayer.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Operations");
+
+            migrationBuilder.DropTable(
+                name: "ReminderDates");
 
             migrationBuilder.DropTable(
                 name: "Patients");

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Build.Evaluation;
 using Microsoft.EntityFrameworkCore;
+using PresentationLayer.Controllers;
 using PresentationLayer.Services;
 using System.Configuration;
 using System.Text.Unicode;
@@ -66,6 +67,9 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
     options.Password.RequireLowercase = false;
 })
     .AddEntityFrameworkStores<Context>()
+    .AddRoleManager<RoleManager<AppRole>>()
+    .AddSignInManager<SignInManager<AppUser>>()
+    .AddUserManager<UserManager<AppUser>>()
     .AddDefaultTokenProviders()
     .AddErrorDescriber<CustomIdentityValidator>();
 
@@ -103,8 +107,13 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 builder.Services.AddHttpContextAccessor();
-//builder.Services.AddScoped<DatabaseInitializer>(); // auto migrate scope entegrasyon
+builder.Services.AddScoped<DatabaseInitializer>(); // auto migrate scope entegrasyon
+builder.Services.AddScoped<UserManager<AppUser>>();
+builder.Services.AddScoped<SignInManager<AppUser>>();
+
 var app = builder.Build();
+
+
 
 //#region AutoMigrate
 //using (var scope = app.Services.CreateScope())
@@ -182,6 +191,5 @@ app.UseEndpoints(endpoints =>
       pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
     );
 });
-//app.UseMiddleware<DatabaseConfigMiddleware>();
-//app.databaseInitializer.InitializeDatabaseAsync().Wait();
+
 app.Run();
