@@ -8,16 +8,3 @@
 //    $(this).ekkoLightbox({ alwaysShowClose: true });
 //});
 
-
-$(window).on("load", function () {
-    // Loader elementini al
-    var loader = $("#loader");
-    // Content elementini al
-    var content = $("#content");
-
-    // İçeriği göster
-    content.show();
-
-    // Loader'ı kaldır (fadeOut kullanarak bir animasyon ekleyebilirsiniz)
-    loader.fadeOut();
-});

@@ -260,8 +260,7 @@
     <script src="/theme/assets/js/main.js"></script>
 
     <!-- Page JS -->
-    <script src="/theme/assets/vendor/js/helpers.js"></script>
-    <script src="/theme/assets/js/config.js"></script>
+
     <!--Datatables-->
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
@@ -294,6 +293,21 @@
 </html>
 
 
+<script>
+
+    $(window).on("load", function () {
+        // Loader elementini al
+        var loader = $("#loader");
+        // Content elementini al
+        var content = $("#content");
+
+        // İçeriği göster
+        content.show();
+
+        // Loader'ı kaldır (fadeOut kullanarak bir animasyon ekleyebilirsiniz)
+        loader.fadeOut();
+    });
+</script>
 
 
 <script>
@@ -374,8 +388,8 @@
                 title: title,
         @*                 text: '@TempData["Message"]', *@
                 icon: icon
-                                                                            });
-                                                                        };
+                                                                                    });
+                                                                                };
     </script>
 }
 
