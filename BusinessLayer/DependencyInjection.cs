@@ -2,6 +2,7 @@
 using BusinessLayer.Concrate;
 using DataAccessLayer.Abstract;
 using DataAccessLayer.EntityFramework;
+using EntityLayer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -32,6 +33,8 @@ namespace BusinessLayer
 
             services.AddScoped<IPatientOperationImgService, PatientOperationImgManager>();
             services.AddScoped<IPatientOperationImgDAL, EfPatientOperationImgDAL>();
+
+            
 
             return services;
         }

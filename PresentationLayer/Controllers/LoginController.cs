@@ -71,26 +71,7 @@ namespace PresentationLayer.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
-        //{
-        //    returnUrl ??= Url.Content("~/");
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
-        //        if (result.Succeeded)
-        //        {
-        //            return RedirectToAction("LoginCheck", "Home");
-        //        }
-        //        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-        //        return View(model);
-        //    }
-
-        //    return View(model);
-        //}
-
+      
 
         public async Task<IActionResult> Login(LoginViewModel model)
         {
@@ -119,78 +100,6 @@ namespace PresentationLayer.Controllers
             }
             return View(model);
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> Login(LoginViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        // CustomerDatabaseConfigs tablosundan ilgili kullanıcıyı bul
-        //        var customerDatabase = await _context.CustomerDatabaseConfigs.FirstOrDefaultAsync(c => c.Email == model.Email);
-
-        //        if (customerDatabase != null)
-        //        {
-        //            // DbContextOptions'u modelden gelen bağlantı bilgisiyle oluştur
-        //            var dbContextOptions = new DbContextOptionsBuilder<Context>()
-        //                                        .UseSqlServer(customerDatabase.ConnectionString)
-        //                                        .Options;
-        //            var identityOptions = Options.Create(new IdentityOptions());
-        //            var claimsFactory = new UserClaimsPrincipalFactory<AppUser>(_userManager, identityOptions);
-        //            var signInManager = new SignInManager<AppUser>(_userManager, _httpContextAccessor, claimsFactory, null, null, null, null);
-
-        //            // Yeni bir Context örneği oluşturarak yeni veritabanına bağlan
-        //            using (var newContext = new Context(dbContextOptions, _httpContextAccessor, _configuration))
-        //            {
-        //                // Kullanıcıyı yeni veritabanı context'inde bul
-        //                var user = await newContext.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
-
-        //                if (user != null)
-        //                {
-        //                    await signInManager.SignInAsync(user, isPersistent: false); // isPersistent: false kalıcı oturum için
-        //                    return RedirectToAction("Index", "Dashboard");
-
-        //                }
-        //                else
-        //                {
-        //                    // Kullanıcı giriş yapamaz
-        //                }
-
-        //                //if (user != null)
-        //                //{
-        //                //    var identityOptions = Options.Create(new IdentityOptions());
-
-        //                //    // Create UserClaimsPrincipalFactory with the options
-        //                //    var claimsFactory = new UserClaimsPrincipalFactory<AppUser>(_userManager, identityOptions);
-        //                //    var signInManager = new SignInManager<AppUser>(_userManager, _httpContextAccessor, claimsFactory, null, null, null, null);
-
-        //                //    // Kullanıcı adı ve şifreyle giriş denemesi yap
-        //                //    var result = await signInManager.PasswordSignInAsync(user.UserName, model.Password, false, lockoutOnFailure: false);
-
-        //                //    if (result.Succeeded)
-        //                //    {
-        //                //        // Giriş başarılı, kullanıcı ana sayfaya yönlendirilebilir
-        //                //        return RedirectToAction("Index", "Home");
-        //                //    }
-        //                //    else
-        //                //    {
-        //                //        ModelState.AddModelError(string.Empty, "Invalid login attempt. Please check your credentials.");
-        //                //    }
-        //                //}
-        //                //else
-        //                //{
-        //                //    ModelState.AddModelError(string.Empty, "User not found. Please check your credentials.");
-        //                //}
-        //            }
-        //        }
-        //        else
-        //        {
-        //            ModelState.AddModelError(string.Empty, "Invalid login attempt. Customer database not found.");
-        //        }
-        //    }
-
-        //    // ModelState.IsValid false ise veya işlem başarısızsa, login sayfasını tekrar göster
-        //    return View(model);
-        //}
 
 
 
@@ -230,9 +139,7 @@ namespace PresentationLayer.Controllers
         {
             if (ModelState.IsValid)
             {
-                var email = model.Email;
-                var databaseInitializer = new DatabaseInitializer(_serviceProvider);
-                await databaseInitializer.InitializeDatabaseAsync(email);
+                
 
                 Random random = new Random();
                 int code;

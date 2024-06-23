@@ -15,8 +15,7 @@ namespace PresentationLayer.Controllers
 {
     public class PersonalController : Controller
     {
-        private IPersonalService _personalservice;
-        PersonalDTO personalDTO = new PersonalDTO();
+        private IPersonalService _personalservice;       
 
         private readonly Context _context;
         public PersonalController(IPersonalService personalservice, Context context)
@@ -65,16 +64,20 @@ namespace PresentationLayer.Controllers
 
 
             string answer = _personalservice.CheckCreate(personal);
+            int.TryParse(answer, out int resultid);
+            var personalid = personal.PersonalID;
             if (result.IsValid)
             {
                 if (answer == "success")
                 {
-                    TempData["Message"] = /*personal.Name + " İsimli Personel Eklendi. "*/ "add";
+                    TempData["Message"] = "add";
+                    return RedirectToAction("PersonalDetails", new { id = personalid });
 
                 }
-                else if (answer == "dublicate")
+                else
                 {
-                    TempData["Message"] = /*"Bu Marka daha önceden eklendi."*/ "duplicate";
+                    TempData["Message"] = "duplicate";
+                    return RedirectToAction("PersonalDetails", new { id = resultid });
                 }
             }
             else
@@ -125,11 +128,11 @@ namespace PresentationLayer.Controllers
 
         }
 
-        [HttpGet]
         public async Task<IActionResult> PersonalUpdate(int id)
         {
-            ScopeList();
-            var person = _personalservice.GetById(id);
+            List<Scope> scopes = await _personalservice.ScopeSelect();
+            ViewData["scopelist"] = scopes.Select(c => new SelectListItem { Text = c.Title, Value = c.Title.ToString() });
+            var person = await _context.Personals.FirstOrDefaultAsync(x => x.PersonalID == id);
             return View(person);
         }
 
@@ -162,9 +165,15 @@ namespace PresentationLayer.Controllers
     .Include(patient => patient.Personal) // Operations yerine Operation olmalı, doğru ilişki adını kullanmalısınız
     .Where(patient => patient.Personal.PersonalID == id)
     .ToList();
-            personalDTO.personaldto = _personalservice.GetById(id);
-            personalDTO.operationlist = operation.ToList();
-            return View(personalDTO);
+           
+
+            PersonalDTO personal = new PersonalDTO
+            {
+                personaldto= _personalservice.GetById(id),
+                operationlist=operation.ToList()
+            };
+
+            return View(personal);
         }
 
     }

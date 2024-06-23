@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using PresentationLayer.Services;
 using System.Security.AccessControl;
@@ -85,36 +86,93 @@ namespace PresentationLayer.Controllers
                     _context.Database.CloseConnection();
                 }
 
+                var customerDatabaseconn = await _context.CustomerDatabaseConfigs.FirstOrDefaultAsync(c => c.Email == model.Email);          
+
+                if (customerDatabaseconn != null)
+                {
+                    string connectionString = customerDatabaseconn.ConnectionString;
+                    string sqlFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "script.sql");
+
+                    if (System.IO.File.Exists(sqlFilePath))
+                    {
+                        string sqlScript = await System.IO.File.ReadAllTextAsync(sqlFilePath);
+                        await ExecuteSqlScript(connectionString, sqlScript);
+
+
+                        var user = new AppUser { UserName = model.Email, Email = model.Email };
+                        var result = await _userManager.CreateAsync(user, model.Password);
+                        if (result.Succeeded)
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false); // isPersistent: false -> tarayıcı kapandığında kullanıcının oturumu                                                                  sonlanır
+                            return RedirectToAction("Index", "Dashboard");
+                        }
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError("", error.Description);
+                        }                        
+                    }
+                    else
+                    {
+                        return NotFound("SQL file not found.");
+                    }
+
+
+                }
+               
+
+
                 // DbContextOptions'u modelden gelen bağlantı bilgisiyle oluştur
-                var dbContextOptions = new DbContextOptionsBuilder<Context>()
-                                            .UseSqlServer(model.ConnectionString)
-                                            .Options;
+                //var dbContextOptions = new DbContextOptionsBuilder<Context>()
+                //                            .UseSqlServer(model.ConnectionString)
+                //                            .Options;
 
-                // Yeni Context örneği oluştur
-                using (var context = new Context(dbContextOptions, _httpContextAccessor, _configuration))
-                {
-                    // Veritabanı migration işlemini gerçekleştir
-                    context.Database.Migrate();
+                //// Yeni Context örneği oluştur
+                //using (var context = new Context(dbContextOptions, _httpContextAccessor, _configuration))
+                //{
+                //    // Veritabanı migration işlemini gerçekleştir
+                //    context.Database.Migrate();
 
-                    // Yeni kullanıcı ekleme işlemi                   
-                }
-                var user = new AppUser { UserName = model.Email, Email = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    await _signInManager.SignInAsync(user, isPersistent: false); // isPersistent: false -> tarayıcı kapandığında kullanıcının oturumu                                                                  sonlanır
-                    return RedirectToAction("Index", "Dashboard");
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
+                //    // Yeni kullanıcı ekleme işlemi                   
+                //}
+
+
             }
 
             // ModelState.IsValid false ise veya kullanıcı zaten mevcutsa, Register sayfasını tekrar göster
             return View(model);
         }
 
+
+        private async Task ExecuteSqlScript(string connectionString, string sqlScript)
+        {
+            // Split the script based on "GO" keyword, which should be on its own line
+            var sqlStatements = System.Text.RegularExpressions.Regex.Split(sqlScript, @"^\s*GO\s*$", System.Text.RegularExpressions.RegexOptions.Multiline | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+                foreach (var statement in sqlStatements)
+                {
+                    // Trim and check if the statement is not empty or whitespace
+                    var trimmedStatement = statement.Trim();
+                    if (!string.IsNullOrWhiteSpace(trimmedStatement))
+                    {
+                        using (var command = new SqlCommand(trimmedStatement, connection))
+                        {
+                            try
+                            {
+                                await command.ExecuteNonQueryAsync();
+                            }
+                            catch (SqlException ex)
+                            {
+                                // Log or handle the exception as needed
+                                throw new Exception($"An error occurred while executing the SQL script: {ex.Message}", ex);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
 
     }

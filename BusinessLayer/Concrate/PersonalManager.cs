@@ -34,29 +34,30 @@ namespace BusinessLayer.Concrate
         public string CheckCreate(Personal personal)
         {
 
-                try
+            try
+            {
+                Personal p = _context.Personals.FirstOrDefault(c => c.Mail.ToLower() == personal.Mail.ToLower());
+
+                if (p == null)
                 {
-                    Personal p = _context.Personals.FirstOrDefault(c => c.Mail.ToLower() == personal.Mail.ToLower());
-
-                    if (p == null)
-                    {
-                        personal.Mail.ToLower();
-                        _context.Add(personal);
-                        _context.SaveChanges();
-                        return "success";
-
-                    }
-                    else
-                    {
-                        return "dublicate";
-                    }
+                    personal.Mail.ToLower();
+                    _context.Add(personal);
+                    _context.SaveChanges();
+                    return "success";
 
                 }
-                catch (Exception)
+                else
                 {
-
-                    return "error";
+                    string perid = p.PersonalID.ToString();
+                    return perid;
                 }
+
+            }
+            catch (Exception)
+            {
+
+                return "error";
+            }
 
         }
 

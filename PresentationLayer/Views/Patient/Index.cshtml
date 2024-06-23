@@ -5,7 +5,7 @@
 }
 
 
-<div>
+<div class="add-button-top">
     <a href="/Patient/PatientAdd" class="btn btn-success waves-effect waves-light">Hasta Ekle</a>
 
 </div>
@@ -22,9 +22,6 @@
             <th>Ülkesi</th>
 
             <th></th>
-            <th></th>
-            <th></th>
-
         </tr>
     </thead>
     <tbody>
@@ -38,15 +35,20 @@
                 <td>@item.DateOfBirth.ToShortDateString()</td>
                 <td>@item.PhoneNumber</td>
                 <td>@item.Country</td>
-               
-                <td>
-                    <a asp-action="PatientDetails" asp-route-id="@item.PatientID"  asp-controller="Patient" class="btn btn-primary waves-effect waves-light">Detay</a>
-                </td>
-                <td>
-                    <a asp-action="PatientUpdate" asp-route-id="@item.PatientID" asp-controller="Patient" class="btn btn-warning waves-effect waves-light">Güncelle</a>
-                </td>
-                <td>
-                    <a href="/Patient/PatientDelete/@item.PatientID" class="btn btn-danger waves-effect waves-light">Sil</a>
+                <td class="text-center">
+                    <div class="d-flex justify-content-center">
+                        <div class="btn-group" role="group">
+                            <div class="btn-group" role="group">
+                                <a asp-action="PatientDetails" asp-route-id="@item.PatientID" asp-controller="Patient" class="btn btn-primary waves-effect waves-light">Detay</a>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <a asp-action="PatientDetails" asp-route-id="@item.PatientID" asp-controller="Patient" class="btn btn-warning waves-effect waves-light">Güncelle</a>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <a href="/Patient/PatientDelete/@item.PatientID" class="btn btn-danger waves-effect waves-light">Sil</a>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>
         }

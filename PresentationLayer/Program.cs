@@ -107,65 +107,12 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<DatabaseInitializer>(); // auto migrate scope entegrasyon
+//builder.Services.AddScoped<DatabaseInitializer>(); // auto migrate scope entegrasyon
 builder.Services.AddScoped<UserManager<AppUser>>();
 builder.Services.AddScoped<SignInManager<AppUser>>();
-
+builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
 var app = builder.Build();
 
-
-
-//#region AutoMigrate
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-//    try
-//    {
-//        var context = services.GetRequiredService<Context>();
-//        context.Database.Migrate(); // Veritabanını güncelle (migrations uygula)
-
-//        // Yeni kullanıcı ekleme işlemi
-//        var userManager = services.GetRequiredService<UserManager<AppUser>>();
-
-//        var existingUser = await userManager.FindByEmailAsync("example@example.com");
-//        if (existingUser == null)
-//        {
-//            var newUser = new AppUser { UserName = "admin@admin.com", Email = "admin@admin.com" };
-//            var result = await userManager.CreateAsync(newUser, "Aa12345*");
-//            if (result.Succeeded)
-//            {
-//                // Kullanıcı başarıyla eklendi
-//            }
-//            else
-//            {
-//                // Kullanıcı eklenirken bir hata oluştu
-//                foreach (var error in result.Errors)
-//                {
-//                    // Hata mesajlarını loglama veya işleme alma
-//                }
-//            }
-//        }
-//        else
-//        {
-//            // Kullanıcı zaten mevcut
-//        }
-//    }
-//    catch (Exception ex)
-//    {
-//        var logger = services.GetRequiredService<ILogger<Program>>();
-//        logger.LogError(ex, "Veritabanı migration işlemi sırasında bir hata oluştu.");
-//    }
-//}
-
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-//    var databaseInitializer = services.GetRequiredService<DatabaseInitializer>();
-//    await databaseInitializer.InitializeDatabaseAsync();
-//}
-//#endregion
-
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
