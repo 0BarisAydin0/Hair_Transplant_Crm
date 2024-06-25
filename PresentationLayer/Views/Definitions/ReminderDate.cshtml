@@ -6,6 +6,18 @@
     int count = 0;
 }
 
+<style>
+    .exportarea {
+        display: none !important;
+    }
+
+    .d-flex.justify-content-between.searcharea.align-items-center.mx-0.row.mt-2 {
+        display: none !important;
+    }
+
+</style>
+
+
 
 <div class="add-button-top">
     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
@@ -14,7 +26,9 @@
 </div>
 <br />
 
-<table id="example" class="display" style="width:100%">
+<div class="card">
+    <div class="card-body">
+        <table id="example" class="table table-striped" style="width:100%">
     <thead>
         <tr>
             <th>S.Nu</th>
@@ -50,7 +64,8 @@
 
 </table>
 
-
+</div>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

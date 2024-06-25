@@ -53,6 +53,21 @@
         ul.dtr-details {
             width: 100%;
         }
+
+      
+        .dataTables_length {
+            margin-top: 15px; /* İstediğiniz piksel değerini kullanabilirsiniz */
+            margin-bottom: 10px;
+        }
+        
+@@media screen and (max-width: 767px) {
+    .exportbutton {
+        display: none !important;
+    }
+
+        
+}
+    
     </style>
 
 </head>
@@ -263,15 +278,21 @@
 
     <!--Datatables-->
     <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap5.min.css">
 
     <!-- DataTables JS -->
-    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
@@ -313,34 +334,100 @@
 <script>
     $(document).ready(function () {
         $('#example').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                'copy', 'excel', 'pdf', 'print'
+            dom: '<"card-header border-bottom exportarea p-1"<"head-label"><"dt-action-buttons text-start"B>>' +
+                '<"d-flex justify-content-between searcharea align-items-center mx-0 row mt-2"' +  // mt-2 ekledik
+                '<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                't<"d-flex justify-content-between mx-0 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+                buttons: [
+                {
+                    extend: 'collection',
+                    className: 'btn btn-outline-secondary me-2 exportbutton',
+                    text: '<i class="fas fa-download"></i> Dışa Aktar',
+                    buttons: [
+                        {
+                            extend: 'print',
+                            text: '<i class="fas fa-print"></i> Yazdır',
+                            className: 'dropdown-item',
+                            exportOptions: { columns: ':visible' }
+                        },
+                        {
+                            extend: 'csv',
+                            text: '<i class="fas fa-file-csv"></i> CSV',
+                            className: 'dropdown-item',
+                            exportOptions: { columns: ':visible' }
+                        },
+                        {
+                            extend: 'excel',
+                            text: '<i class="fas fa-file-excel"></i> Excel',
+                            className: 'dropdown-item',
+                            exportOptions: { columns: ':visible' }
+                        },
+                        {
+                            extend: 'pdf',
+                            text: '<i class="fas fa-file-pdf"></i> PDF',
+                            className: 'dropdown-item',
+                            exportOptions: { columns: ':visible' }
+                        },
+                        {
+                            extend: 'copy',
+                            text: '<i class="fas fa-copy"></i> Kopyala',
+                            className: 'dropdown-item',
+                            exportOptions: { columns: ':visible' }
+                        }
+                    ]
+                },
+                // {
+                //     text: '<i class="fas fa-plus"></i> Yeni Kayıt Ekle',
+                //     className: 'create-new btn btn-primary me-2',
+                //     action: function (e, dt, node, config) {
+                //         // Modalı aç
+                //         var myModal = new bootstrap.Modal(document.getElementById('newRecordModal'));
+                //         myModal.show();
+                //     }
+                // },
+                // {
+                //     text: '<i class="fas fa-sync"></i> Yenile',
+                //     className: 'btn btn-light-primary me-2',
+                //     action: function (e, dt, node, config) {
+                //         dt.ajax.reload();
+                //     }
+                // }            
+                
             ],
             responsive: true,
-            scrollX: true,
             language: {
-                info: "_TOTAL_ kayıttan _START_ - _END_ kayıt gösteriliyor.",
-                infoEmpty: "Gösterilecek hiç kayıt yok.",
-                loadingRecords: "Kayıtlar yükleniyor.",
-                zeroRecords: "Herhangi bir sonuç bulunamadı",
-                search: "Arama:",
-                infoFiltered: "(toplam _MAX_ kayıttan filtrelenenler)",
-                paginate: {
-                    first: "İlk",
-                    previous: "Önceki",
-                    next: "Sonraki",
-                    last: "Son"
+                sDecimal: ",",
+                sEmptyTable: "Tabloda herhangi bir veri mevcut değil",
+                sInfo: "_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor",
+                sInfoEmpty: "Kayıt yok",
+                sInfoFiltered: "(_MAX_ kayıt içerisinden bulunan)",
+                sInfoPostFix: "",
+                sInfoThousands: ".",
+                sLengthMenu: "Sayfada _MENU_ kayıt göster",
+                sLoadingRecords: "Yükleniyor...",
+                sProcessing: "İşleniyor...",
+                sSearch: "Ara:",
+                sZeroRecords: "Eşleşen kayıt bulunamadı",
+                oPaginate: {
+                    sFirst: "İlk",
+                    sLast: "Son",
+                    sNext: "Sonraki",
+                    sPrevious: "Önceki"
                 },
-                buttons: {
-                    copyTitle: "Panoya kopyalandı.",
-                    copySuccess: {
-                        _: "Panoya %d satır kopyalandı",
-                        1: "Panoya 1 satır kopyalandı"
+                oAria: {
+                    sSortAscending: ": artan sütun sıralamasını aktifleştir",
+                    sSortDescending: ": azalan sütun sıralamasını aktifleştir"
+                },
+                select: {
+                    rows: {
+                        _: "%d kayıt seçildi",
+                        0: "",
+                        1: "1 kayıt seçildi"
                     }
                 }
-            }
+            },
         });
+       
     });
 </script>
 

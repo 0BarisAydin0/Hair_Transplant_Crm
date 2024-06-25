@@ -6,6 +6,18 @@
 }
 
 
+<style>
+    .exportarea {
+        display: none !important;
+    }
+
+    .d-flex.justify-content-between.searcharea.align-items-center.mx-0.row.mt-2 {
+        display: none !important;
+    }
+
+</style>
+
+
 
 <div class="add-button-top">
     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
@@ -14,41 +26,44 @@
 </div>
 <br />
 
-<table id="example" class="display" style="width:100%">
-    <thead>
-        <tr>
-            <th>S.Nu</th>
-            <th>Başlık</th>
-            <th></th>
-            <th></th>
+< <div class="card">
+    <div class="card-body">
+        <table id="example" class="table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>S.Nu</th>
+                    <th>Başlık</th>
+                    <th></th>
+                    <th></th>
 
 
-        </tr>
-    </thead>
-    <tbody>
+                </tr>
+            </thead>
+            <tbody>
 
-        @foreach (var item in Model)
-        {
+                @foreach (var item in Model)
+                {
 
-            count++;
-            <tr>
+                    count++;
+                    <tr>
 
-                <td>@count</td>
-                <td data-title="@item.Title">@item.Title</td>
+                        <td>@count</td>
+                        <td data-title="@item.Title">@item.Title</td>
 
-                <td>
-                    <a onclick="problemupdate('@item.ScopeID')" id="guncelle_@item.ScopeID" data-toggle="modal" data-target="#exampleModal2" class="btn btn-warning waves-effect waves-light">Güncelle</a>
+                        <td>
+                            <a onclick="problemupdate('@item.ScopeID')" id="guncelle_@item.ScopeID" data-toggle="modal" data-target="#exampleModal2" class="btn btn-warning waves-effect waves-light">Güncelle</a>
 
-                </td>
-                <td>
-                    <a onclick="problemdelete('@item.ScopeID')" class="btn btn-danger waves-effect waves-light">Sil</a>
-                </td>
-            </tr>
-        }
-    </tbody>
+                        </td>
+                        <td>
+                            <a onclick="problemdelete('@item.ScopeID')" class="btn btn-danger waves-effect waves-light">Sil</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
 
-</table>
-
+        </table>
+    </div>
+</div>
 
 
 <!-- Modal -->
@@ -123,7 +138,7 @@
         var formData = {
             Title: $("#Title").val(),
             Add: true
-          
+
         };
 
         $.ajax({
@@ -145,34 +160,34 @@
         $("#ScopeID").val(ProblemsID);
         $("#TitleUpdate").val(title);
 
-        
+
         $("#myForm2 #ScopeID").val(ProblemsID);
         $("#myForm2 #TitleUpdate").val(title);
     }
 
     function submitForm2() {
-       
+
         var ProblemsID = $("#ScopeID").val();
         var title = $("#TitleUpdate").val();
         var Update = true;
 
-      
+
         $.ajax({
-            url: '/Definitions/Scope', 
+            url: '/Definitions/Scope',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify({ ScopeID: ProblemsID, Title: title, Update: true }),
             success: function (response) {
-                
+
                 $("#exampleModal2").modal("hide");
                 location.reload();
-               
+
             },
             error: function (xhr, status, error) {
-                
+
                 console.error(error);
-              
+
             }
         });
     }
@@ -189,18 +204,18 @@
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify({ ScopeID: id }), 
+            data: JSON.stringify({ ScopeID: id }),
             success: function (data) {
                 location.reload();
             },
             error: function (error) {
-                
+
             }
         });
     }
 
 
-   
+
 
 </script>
 

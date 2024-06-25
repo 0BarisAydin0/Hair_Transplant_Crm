@@ -7,54 +7,57 @@
 
 
 
-<table id="example" class="display" style="width:100%">
-    <thead>
-        <tr>
-            <th hidden></th>
-            <th>S.No</th>
-            <th>Teknik</th>
-            <th>Greft</th>
-            <th>Fiyat</th>
-            @* <th>Not</th> *@
-            <th>İlgili Hasta</th>
-            <th>Teklif Başlangıç</th>
-            <th>Teklif Bitiş</th>
+<div class="card">
+    <div class="card-body">
+        <table id="example" class="table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th hidden></th>
+                    <th>S.No</th>
+                    <th>Teknik</th>
+                    <th>Greft</th>
+                    <th>Fiyat</th>
+                    @* <th>Not</th> *@
+                    <th>İlgili Hasta</th>
+                    <th>Teklif Başlangıç</th>
+                    <th>Teklif Bitiş</th>
 
-            <th></th>
+                    <th></th>
 
 
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            count++;
-            <tr>
-                <td data-order="1561723222" hidden>@item.OfferID</td>
-                <td>@count</td>
-                <td>@item.Technique</td>
-                <td>@item.GreftCount</td>
-                <td>@item.Price</td>
-                @* <td><textarea rows="2" class="badge bg-label-primary me-1">@item.Note</textarea></td> *@
-                <td>@item.Patient.Name @item.Patient.Surname</td>
-                <td>@item.OfferStartDate.ToShortDateString() </td>
-                <td>@item.OfferEndDate.ToShortDateString() </td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    count++;
+                    <tr>
+                        <td data-order="1561723222" hidden>@item.OfferID</td>
+                        <td>@count</td>
+                        <td>@item.Technique</td>
+                        <td>@item.GreftCount</td>
+                        <td>@item.Price</td>
+                        @* <td><textarea rows="2" class="badge bg-label-primary me-1">@item.Note</textarea></td> *@
+                        <td>@item.Patient.Name @item.Patient.Surname</td>
+                        <td>@item.OfferStartDate.ToShortDateString() </td>
+                        <td>@item.OfferEndDate.ToShortDateString() </td>
 
-                <td>
-                    <a asp-action="PatientDetails" asp-route-id="@item.PatientID" asp-controller="Patient" class="btn btn-primary waves-effect waves-light">Detay</a>
-                </td>
-                @* <td>
+                        <td>
+                            <a asp-action="PatientDetails" asp-route-id="@item.PatientID" asp-controller="Patient" class="btn btn-primary waves-effect waves-light">Detay</a>
+                        </td>
+                        @* <td>
                     <a asp-action="PatientUpdate" asp-route-id="@item.PatientID" asp-controller="Patient" class="btn btn-warning waves-effect waves-light">Güncelle</a>
-                </td> *@
-                @* <td>
+                    </td> *@
+                        @* <td>
                     <a href="/Patient/PatientDelete/@item.PatientID" class="btn btn-danger waves-effect waves-light">Sil</a>
-                </td> *@
-            </tr>
-        }
+                    </td> *@
+                    </tr>
+                }
 
 
-    </tbody>
+            </tbody>
 
-</table>
+        </table>
 
-
+    </div>
+</div>
