@@ -111,6 +111,15 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UserManager<AppUser>>();
 builder.Services.AddScoped<SignInManager<AppUser>>();
 builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
+
+
+builder.Services.AddDistributedMemoryCache(); // Oturum verilerini bellek içinde saklamak için
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Oturum zaman aşımı süresi
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -127,6 +136,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Dashboard}/{action=Index}/{id?}");

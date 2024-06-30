@@ -85,7 +85,9 @@ namespace PresentationLayer.Controllers
                     var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: true);
                     if (result.Succeeded)
                     {
-                       
+                        HttpContext.Session.SetString("UserFirstName", user.Name);
+                        HttpContext.Session.SetString("UserLastName", user.Surname);
+
                         return RedirectToAction("Index", "Dashboard");
                     }
                     else if (result.IsLockedOut)
