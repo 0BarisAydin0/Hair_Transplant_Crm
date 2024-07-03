@@ -4,6 +4,7 @@
 }
 <!DOCTYPE html>
 
+
 <html lang="en"
       class="light-style customizer-hide"
       dir="ltr"
@@ -55,11 +56,19 @@
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="/Theme/assets/js/config.js"></script>
 </head>
-
+<style>
+    .bg-cover-image {
+        background-image: url('/theme/assets/img/loginbg2.jpg'); /* Arka plan resmi yolu */
+        background-size: ; /* Arka plan resminin boyutunu ayarla */
+        background-position: center; /* Arka plan resmini ortala */
+        background-repeat: no-repeat; /* Resmin tekrar etmemesini sağla */
+        height: 100vh; /* Div'in yüksekliğini tam ekran yap */
+    }
+</style>
 <body>
     <!-- Content -->
 
-    <div class="authentication-wrapper authentication-cover authentication-bg">
+    <div class="authentication-wrapper authentication-cover authentication-bg bg-cover-image">
         <div class="authentication-inner row">
             <!-- /Left Text -->
             <div class="d-none d-lg-flex col-lg-7 p-0">

@@ -24,6 +24,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+//builder.Services.AddDistributedMemoryCache(); // Oturum verilerini bellek içinde saklamak için
+//builder.Services.AddSession(options =>
+//{
+//    options.IdleTimeout = TimeSpan.FromMinutes(30); // Oturum zaman aşımı süresi
+//    options.Cookie.HttpOnly = true;
+//    options.Cookie.IsEssential = true;
+//});
 //proje bazında authorize
 builder.Services.AddControllersWithViews(options =>
 {
@@ -32,7 +39,12 @@ builder.Services.AddControllersWithViews(options =>
                      .Build();
     options.Filters.Add(new AuthorizeFilter(policy));
 }).AddRazorRuntimeCompilation();
-
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(option =>
+{
+    option.IdleTimeout = TimeSpan.FromMinutes(1000);
+});
+builder.Services.AddMvc();
 
 // Add services to the container.
 //builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
@@ -50,14 +62,15 @@ builder.Services.AddWebEncoders(o =>
     o.TextEncoderSettings = new System.Text.Encodings.Web.TextEncoderSettings(UnicodeRanges.All);
 });
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Configuration.AddJsonFile("appsettings.json");
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+//builder.Configuration.AddJsonFile("appsettings.json");
 
-// Database context ve Identity ayarları
-builder.Services.AddDbContext<Context>(options =>
-{
-    options.UseSqlServer(connectionString);
-});
+//// Database context ve Identity ayarları
+//builder.Services.AddDbContext<Context>(options =>
+//{
+//    options.UseSqlServer(connectionString);
+//});
+builder.Services.AddDbContext<Context>();
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
     options.Password.RequireDigit = false;
@@ -113,13 +126,7 @@ builder.Services.AddScoped<SignInManager<AppUser>>();
 builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
 
 
-builder.Services.AddDistributedMemoryCache(); // Oturum verilerini bellek içinde saklamak için
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Oturum zaman aşımı süresi
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -132,21 +139,15 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseSession();
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Dashboard}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Login}/{id?}");
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-      name: "areas",
-      pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-    );
-});
 
 app.Run();

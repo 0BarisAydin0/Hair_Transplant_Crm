@@ -79,19 +79,9 @@
 
                     <form id="formAuthentication" class="mb-3" method="post">
                         <div class="text-black" asp-validation-summary="All"></div>
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Şirket Adı</label>
-                            <input type="text"
-                                   class="form-control"
-                                   asp-validation
-                                   asp-for="CompanyName"                                   
-                                   autofocus />
-
-
-
-                        </div>
+                        
                          <div class="mb-3">
-                            <label for="username" class="form-label">Soyadınız</label>
+                            <label for="username" class="form-label">Adınız</label>
                             <input type="text"
                                    class="form-control"
                                    asp-for="Name"
@@ -99,7 +89,7 @@
                         </div>
 
                          <div class="mb-3">
-                            <label for="username" class="form-label">Kullanıcı Adı</label>
+                            <label for="username" class="form-label">Soyadınız</label>
                             <input type="text"
                                    class="form-control"
                                    asp-for="Surname"                                  

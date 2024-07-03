@@ -146,7 +146,7 @@ namespace PresentationLayer.Controllers
                 Random random = new Random();
                 int code;
                 code = random.Next(100000, 1000000);
-                var user = new AppUser { UserName = model.Email, Email = model.Email, ConfirmCode = code };
+                var user = new AppUser { UserName = model.Email, Email = model.Email, ConfirmCode = code,Name=model.Name,Surname=model.Surname };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
